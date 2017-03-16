@@ -1,0 +1,4 @@
+# Don't spider my reporting software html pages.
+User-agent: *
+Disallow: /report/
+

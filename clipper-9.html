@@ -1,0 +1,166 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.9">
+ <TITLE>Frequently Asked Questions (FAQ 2.31) about CA-Clipper and CA-Visual Objects: Clipper in other environments</TITLE>
+ <LINK HREF="clipper-10.html" REL=next>
+ <LINK HREF="clipper-8.html" REL=previous>
+ <LINK HREF="clipper.html#toc9" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="clipper-10.html">Next</A>
+<A HREF="clipper-8.html">Previous</A>
+<A HREF="clipper.html#toc9">Contents</A>
+<HR>
+<H2><A NAME="s9">9. Clipper in other environments</A></H2>
+
+<H2><A NAME="ss9.1">9.1 How do I port my existing CA-Clipper code to a Unix system?</A>
+</H2>
+
+<P>(Disclaimer: I'm not only a fan of FlagShip but a developer of
+FlagShip add-ons and a reseller of WGS's Linux package.  But they
+honestly do have a great product.)
+<P> 
+The most popular tool to perform such a task is FlagShip,
+distributed in the US by
+<P> 
+<PRE>
+&lt;url name="WorkGroup Solutions, Inc." url="http://www.wgs.com">
+Post Office Box 460190
+Aurora, Colorado 80046-0190
+Sales: +1 303 699 7470
+Email: info@wgs.com
+</PRE>
+<P>
+<P>FlagShip claims to be "NOT a porting tool" but "in fact a full Unix
+implemetation of CA-Clipper through version 5.2e."  A spokesman goes
+on to say that "the fact that C intermediate code exists is useful for
+some, but safe to ignore for most users."
+<P>
+<P>There is also a freeware portable translator for Clipper called
+<A HREF="http://www.on-the-net.com/x2c">X2c</A>.  This used
+to be a commercial product but the publisher decided to redirect
+its resources to other projects.
+<P>
+<H2><A NAME="ss9.2">9.2 I want to use .DBF files in my C program.  How?</A>
+</H2>
+
+<P> 
+C Libraries for using .DBF and index files include:
+<P>
+<PRE>
+herCules
+APIS Software
+Frankfurt/Main, Germany
+
+Includes source code, understands NDX, MDX, NTX, and IDX
+files.  Supports DOS, Windows, OS/2, and UNIX/XENIX.
+ 
+SoftC Database Library
+SoftC, Ltd.
+Anoka, Minnesota USA
+
+Source code and Windows DLL included.
+Supports DOS, Windows, OS/2, and UNIX/XENIX.
+ 
+&lt;url name="Sequiter Software" url="http://www.supernet.ab.ca/Mall/Computer/Sequiter/sequiter.htm">
+CodeBase and CodeBase++
+</PRE>
+<P>Contributions by
+<A HREF="http://www.wgs.com">Mark Bolzern (WGS)</A>,
+Barry Mavin (Recital),
+Guenter Schwaninger, and
+<A HREF="mailto:rich@on-the-net.com">Rich Roth</A><P>
+<P>
+<H2><A NAME="ss9.3">9.3 I want to read and write files on my IBM minicomputer(s): a</A>
+ System/38 or AS/400.  How can I accomplish this?</H2>
+
+<P>
+<P>Last updated 1 January 1994; contributions by Brad H. Codd of Aladdin.
+<P>A product from Aladdin allows your CA-Clipper application to access
+native AS400 data files at the record level.  Call Aladdin at
++27 11 642-4588.  Technical support was
+promised to be available in Los Angeles, California USA beginning
+January 1992, but I have not verified this.
+<P>As of July 1993 I have been informed that this can also be done
+with CAS400 by T.L. Creates at +1 209 946 0105, and with Clip2
+by Dabiwa, Ltd., at +1 215 692 8130.
+<P>An RDD called Win/400 does the same.  I don't have contact
+info for this product though.
+<P>
+<H2><A NAME="ss9.4">9.4 What's the big deal about this FoxPro Rushmore Technology?</A>
+A long time ago when I was still developing in DOS I was thinking aboutswitching from CA-Clipper to FoxPro!</H2>
+
+<P>Rushmore is not an index type, nor is it magic as the Fox people
+would have you believe.  It is simply a FoxPro feature that
+automatically figures out the most efficient way to use existing
+indexes in a query (LOCATE, LIST, anything with a FOR clause,
+etc.).
+<P>Rushmore is handy for interactive queries, but most application
+developers can know ahead of time what lookups need to be done
+on their database files and can arrange for an optimized lookup
+the old-fashioned way with little effort.
+<P>That's why the Rushmore test results look so good but are not very
+relevant to what many application developers really do.  If you
+are trying to write a very open-ended reporting program, on the
+other hand, it may be just the ticket.
+<P>Third-party database drivers (RDDs) for Clipper can perform
+similar query optimization.  Two that I know of are Mach Six
+(included in The SIx Driver package) and ClipMore (an add-in
+to COMIX).
+<P>
+<H2><A NAME="ss9.5">9.5 Someone said I could access FoxPro-type indices.  What</A>
+is the difference between FoxPro indices and CA-Clipper indices?What gain can I get from doing that, and how?</H2>
+
+<P>First off, there are several advantages to using a FoxPro-like
+index scheme.
+<P>*.CDX files can contain more than one "tag," each of which relates
+to an index key.  Therefore you can drop all your many CA-Clipper
+*.NTX files by converting each to a "tag" within a single .CDX file.
+This also lets you always open a file with <CODE>USE &lt;file>
+INDEX &lt;file></CODE>
+with assurance that you got all the tags.  Better still, when
+you perform a plain
+<CODE>USE &lt;file></CODE>,
+the driver will automatically
+find and open a corresponding .CDX file with the same base name
+as the datafile.
+<P>Replaceable Database Drivers which support FoxPro-like files are:
+<P>
+<UL>
+<LI>The SIx Driver by Successware</LI>
+<LI>Comix by Loadstone</LI>
+<LI>The DBFCDX driver already included in CA-Clipper 5.2e</LI>
+<LI>The DBFCDX driver in CA-Clipper 5.3 *is* Comix.</LI>
+</UL>
+<P>SIx itself does not give you Rushmore lookups, but it is shipped
+with an add-in called MACH which does.  Likewise Comix has an
+accompanying library called ClipMore which does the same thing.
+<P>
+<H2><A NAME="ss9.6">9.6 How do I dial a modem from within a CA-Clipper application?</A>
+</H2>
+
+<P> 
+The modem on a serial port can be looked at as just another file
+as far as output is concerned.  (This is a useful
+oversimplification.)  You just need to open the serial port as a
+file and write a string such as "ATDT123-4567" followed by a carriage
+return and line feed to send a Hayes-compatible dial command to the
+modem.  A function like this would do the job nicely:
+<P>
+<HR>
+<PRE>
+FUNCTION dialphone (nPort, cNumber)
+LOCAL nFile := FCREATE ("COM" + STR (nPort, 1))  // Open port
+FWRITE (nFile, "ATDT"+cNumber+CHR(13)+CHR(10))   // Write ATDT command
+FCLOSE (nFile)                                   // Close it
+RETURN NIL
+</PRE>
+<HR>
+<P>
+<HR>
+<A HREF="clipper-10.html">Next</A>
+<A HREF="clipper-8.html">Previous</A>
+<A HREF="clipper.html#toc9">Contents</A>
+</BODY>
+</HTML>

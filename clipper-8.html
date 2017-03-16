@@ -1,0 +1,643 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.9">
+ <TITLE>Frequently Asked Questions (FAQ 2.31) about CA-Clipper and CA-Visual Objects: Programming and design issues</TITLE>
+ <LINK HREF="clipper-9.html" REL=next>
+ <LINK HREF="clipper-7.html" REL=previous>
+ <LINK HREF="clipper.html#toc8" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="clipper-9.html">Next</A>
+<A HREF="clipper-7.html">Previous</A>
+<A HREF="clipper.html#toc8">Contents</A>
+<HR>
+<H2><A NAME="s8">8. Programming and design issues</A></H2>
+
+<H2><A NAME="ss8.1">8.1 What are LOCAL variables and why do I care?</A>
+</H2>
+
+<P> 
+LOCAL variables are somewhat like PRIVATE variables in that they
+do not "scope up"; if you declare a PRIVATE or LOCAL variable in
+function B which is called from function A, then function A does
+not know the variable exists.  Function A is even free to use the
+same name for a different variable entirely without risk of
+confusion.  This is useful for writing functions that can avoid
+"stepping on" the variables that are floating around a larger
+application.
+<P>LOCAL variables, introduced with Clipper 5.0, enforce a stricter
+kind of modularity.  A LOCAL variable must be declared, and it
+is visible only to the particular function in which it is
+declared.  (Remember that PRIVATEs are created by default.)  Not
+only does a LOCAL variable refrain from "up-scoping" but it also
+will not "down-scope" either.
+<P>For example:
+<P>
+<HR>
+<PRE>
+// LOCAL1.PRG
+FUNCTION caller
+LOCAL a
+PRIVATE x, y
+a := "a"
+x := "ABC"
+y := "123"
+? a, x, y        // Prints "a       ABC     123"
+callee()
+? a, x, y        // Prints "a       ABC     456"
+RETURN NIL
+ 
+FUNCTION callee
+LOCAL a
+PRIVATE x        // Notice y not declared PRIVATE!
+x := "DEF"
+y := "456"
+? a, x, y        // Prints "NIL     DEF     456"
+RETURN NIL
+</PRE>
+<HR>
+<P>The values of (a) in the two functions are completely
+independent of each other, because they are indeed two
+separate variables.  The values of (x) in the two functions
+are also separate and independent, because CALLEE() has declared
+its version of (x) PRIVATE.  There is only one (y) variable,
+however, since CALLEE() has neglected to declare it.
+<P>LOCAL variables are useful for writing code that is guaranteed
+bulletproof regardless of the application environment.  LOCAL
+variables (and their cousins, the STATICs) are immune from having
+their values changed by unrelated underlying functions.  This cuts
+down on maintenance and debugging while offering some speed
+advantages too.
+<P>Because all uses of a local variable are known to the compiler
+(being all in one function) there is no need for an entry in the
+run-time symbol table, which does save some time and memory during
+program execution.  A side effect is that the names of LOCAL
+variables in a macro expression are not found; therefore
+<P>
+<HR>
+<PRE>
+LOCAL x, y
+x := "y"
+? &amp;x
+</PRE>
+<HR>
+<P>will fail unless there is a PRIVATE or PUBLIC variable named (y).
+<P>LOCALs work just like "auto" or stack variables in C and C++.
+<P>
+<H2><A NAME="ss8.2">8.2 What are STATIC variables and why do I care?</A>
+</H2>
+
+<P> 
+STATIC variables are similar to LOCALs in that they do not
+"up-scope" or "down-scope."  STATICs, however, keep their value
+throughout the duration of the program, even when they are not
+"visible."  For example:
+<P>
+<HR>
+<PRE>
+// STATIC1.PRG
+FUNCTION caller
+LOCAL i
+? "BEGIN"
+FOR i := 1 TO 100
+        ? "Loop number ", i
+        callee()
+NEXT
+? "END"
+RETURN NIL
+ 
+FUNCTION callee
+LOCAL l := 0
+STATIC s := 0
+l++
+s++
+? l, s
+RETURN NIL
+</PRE>
+<HR>
+<P>
+<P>The output will look like this:
+<P>
+<HR>
+<PRE>
+    BEGIN
+    Loop number     1
+        1      1
+    Loop number     2
+        1      2
+    Loop number     3
+        1      3
+    Loop number     4
+        1      4
+        ...    ...
+    Loop number   100
+        1    100
+    END
+</PRE>
+<HR>
+<P>Notice that each iteration of the loop increments the value of (s)
+from the previous iteration, while the value of (l) starts all over
+again from scratch.
+<P>The most common use of STATIC variables is to maintain values that
+are useful to a group of functions, or to the whole application,
+without resorting to global PRIVATE or PUBLIC variables.  (See next
+Question.)
+<P>STATIC variables carry the same features as LOCALs with regard to
+symbol table entries and macro expansion as noted above.
+<P>STATICs work just like static variables in C and C++.
+<P>Someone (whose identity I've unfortunately misplaced) wrote to add: "It
+is dangerous to use large numbers of STATIC variables in an application,
+since they must all fit into one 64K data segment.  The FAQ proposes
+creating an array of values rather than a plethora of STATICs, but I
+wonder if this problem should be mentioned more prominently."  So there
+it is.
+<P>
+<H2><A NAME="ss8.3">8.3 How do I switch all my PUBLICs to STATICs?</A>
+</H2>
+
+<P>Pull these variables in logical groups (e.g., all colors in
+one place) into separate source files and declare them STATIC.
+Then write a function or set of functions which allow you to get
+(and optionally set) the values of these variables.  For example,
+COLORS1.PRG will return the current value of the cNormal variable,
+and will also set the variable if you pass it a value.
+<P>
+<HR>
+<PRE>
+// COLORS1.PRG
+STATIC cNormal
+FUNCTION setnorm (x)
+LOCAL cRet := cNormal
+IF x != NIL
+ cNormal := x
+ENDIF
+RETURN cRet
+</PRE>
+<HR>
+<P>If you have more than a few of these variables to get and set this
+may present a problem; the source and object code for these functions
+will quickly grow out of hand!  So let's take it one step further by
+hiding this batch of functions with the preprocessor.
+<P>
+<HR>
+<PRE>
+// COLORS2.PRG--Link this into your application.
+// Colors: 1 Normal  2 Error Message  3 Prompt  4 F-key legend
+STATIC acColor[4]
+FUNCTION setstdcol (x, y)
+LOCAL cRet := acColor[x]
+IF y != NIL
+ acColor[x] := y
+ENDIF
+RETURN cRet
+ 
+// APP.CH-- #include this in all your application's source files.
+#xtranslate setnorm   (&lt;x>) => setstdcol (1, &lt;x>)
+#xtranslate seterr    (&lt;x>) => setstdcol (2, &lt;x>)
+#xtranslate setprompt (&lt;x>) => setstdcol (3, &lt;x>)
+#xtranslate setfkey   (&lt;x>) => setstdcol (4, &lt;x>)
+</PRE>
+<HR>
+<P>With this set of directives and the single function setstdcol()
+you can keep the size of your sources and EXE down.  At the same
+time the application programmer (you or someone else) can have a
+stable interface to this array of values no matter how large the
+application gets or how many new elements you want to add to the
+array.
+<P>There is a school of thought that believes that variables that are
+truly global in intent should just be made PUBLIC anyway.
+<P>
+<H2><A NAME="ss8.4">8.4 What are the ground rules for using LOCALs and STATICs?</A>
+</H2>
+
+<P> 
+LOCALs and STATICs must be the first statements in a function,
+except possibly for the PARAMETERS statement.  They may be
+declared with initial values (e.g. LOCAL a := 1), but STATICs may
+not be initialized with a value that is unknown to the compiler
+(e.g. STATIC b := myfunc()--where myfunc is the name of your
+user-defined function--is invalid).  The initialization is
+performed every time the function is called (in the case of
+LOCALs) or once at the beginning of the program (in the case of
+STATICs).
+<P>If you want to use a file-wide STATIC variable to share information
+among functions within the same source module, that module must be
+compiled with the /n switch, and the STATIC declarations must
+precede the first FUNCTION or PROCEDURE.
+<P>
+<H2><A NAME="ss8.5">8.5 What are INIT and EXIT procedures?  Why do I care?</A>
+</H2>
+
+<P>A procedure declared as INIT PROCEDURE &lt;name> will always execute
+on program startup before the main procedure is executed.  A
+procedure declared as EXIT PROCEDURE &lt;name> will likewise execute
+just after the main procedure terminates.
+<P>INIT PROCEDUREs are useful if you have STATIC variable
+initializations that cannot be done inline.  Both INIT and EXIT
+PROCEDUREs are handy for generalized setup and cleanup
+in a module that you want to make fully independent of the
+calling program.
+<P>INIT FUNCTION works the same as INIT PROCEDURE, and EXIT
+FUNCTION works the same as EXIT PROCEDURE.  Their return values
+are ignored though.
+<P>Clipper makes no guarantees as to the order of execution of INIT and
+EXIT procedures.
+<P>On this point, Clayton Neff writes:
+If you have 3 or 4 INIT functions, you don't have any
+control over the order in which they are called.  Since the RDD setup
+routines are also in an INIT function, Clipper won't necessarily have
+set up the RDD system before your INIT function is called.  This would
+cause any data file access routines to crash.  The same is true for EXIT
+routines as well.
+<P>The INIT and EXIT features worked fine in
+Clipper 5.01 but weren't documented until the 5.2 release.
+<P>
+<H2><A NAME="ss8.6">8.6 What are the ANNOUNCE and REQUEST statements?</A>
+</H2>
+
+<P> 
+(Answer supplied by Doug Lee.)
+<P>REQUEST is used to force functions, procedures, and modules to be
+linked into an application whether or not they are referenced
+directly.  REQUEST officially replaces the EXTERNAL statement
+provided in versions of Ca-Clipper prior to 5.2.
+<P>Functions and procedures are linked into an application
+automatically if they are referenced directly in the source code
+or if they are located in .OBJ files which are explicitly listed
+in the link script.  However, if a function is not referenced
+until run time and is to be drawn from a library, it must be
+REQUESTed.  Examples of this include INIT and EXIT procedures,
+functions and procedures referenced only from within index
+expressions or report forms, and MEMOEDIT user functions.  If you
+have a report form which calls MEMOTRAN and your application makes
+no further reference to that function, you must include the line
+<P>REQUEST MEMOTRAN
+<P>in one of your source files.
+<P>ANNOUNCE is used to name modules for REQUESTing.  By using
+ANNOUNCE, you can cause a whole collection of procedures and
+functions to be linked into an application with one REQUEST line.
+If you have a module containing a number of functions used
+exclusively by report forms, you may place a statement like
+<P>ANNOUNCE REPUTILS
+<P>at the top of the module.  You may then REQUEST REPUTILS to bring
+the whole module into the application.
+<P>REQUEST and ANNOUNCE are often used in conjunction with INIT and
+EXIT procedures to establish the environment of an application with
+minimal effort.  For example, you could write a module similar to
+the following and include it in your local function library:
+<P>ANNOUNCE STARTUP
+<P>STATIC screen
+<P>INIT PROCEDURE myInit()
+<P>* Preserve the screen which was active when this app was started
+screen := SAVESCREEN(0,0, 24,79)
+<P>* Initialize the Clipper environment
+SET SCOREBOARD OFF
+SET EXCLUSIVE OFF
+:
+:
+<P>RETURN NIL
+<P>EXIT PROCEDURE myExit()
+<P>* Restore the screen which was active when this app was started
+RESTSCREEN(0,0, 24,79, screen)
+<P>RETURN NIL
+<P>Then, including the line
+<P>REQUEST STARTUP
+<P>would automatically cause the screen to be saved and restored
+across program execution, etc.
+<P>
+<PRE>
+From: cneff@primenet.com (Clayton Neff)
+Subject: CA-Clipper Frequently Asked Questions
+Date: Mon, 22 Apr 1996 15:38:33 GMT
+</PRE>
+<P>
+<P>A REQUEST statement tells the Clipper compiler to ask the linker to
+resolve an external reference.  So, instead of calling an actual function,
+you can request the module that it resides in.  This is most useful for
+making sure the proper RDD is linked in, since your code won't call the
+data access functions directly.  An ANNOUNCE statement simply adds an
+identifier to the object code.  This way you can label a particular module
+internally in such a way that the linker will find it, even if there is no
+actual function with that name.  Again, this is useful with RDDs, since it
+is unlikely that there would be a function or procedure called DBFCDX.
+<P>
+<H2><A NAME="ss8.7">8.7 Is it more efficient to use one multi-dimensional array or</A>
+several single dimension arrays in a program? The array(s)would be static and called at the top of the program.</H2>
+
+<P>(Answer supplied by Mark Neidorff.)
+<P>Assembler programmers are very familiar with memory segments.  Each
+segment is a 64k block of memory.  Clipper uses the DS segment as a
+lookup table for several different types of information.  In Clipper
+the DS segment is called DGROUP.  Third-party libraries may be
+significant users of DGROUP.  Once DGROUP is filled, a program crashes.
+This is normally not a concern for developers.
+<P>An entry in DGROUP is created for each static variable in a program.
+By minimizing DGROUP usage, a program is made more bullet-proof.
+Therefore, from the standpoint of DGROUP usage, a single static
+multi-dimensional array is more efficient than several single
+dimensional arrays.
+<P>From a completely different perspective, a multi-dimensional array is a
+model of data.  Once you are comfortable with multi-dimensional
+arrays, you can dynamically store data in your code.  A 50 record 3
+field lookup table (dbf file) can be represented in memory with an
+array like this:
+<P>
+<HR>
+<PRE>
+    // MyLookup[3,50]
+</PRE>
+<HR>
+<P>At startup you can read the entire table into the array once and close
+the table saving a file handle and cutting down on disk lookups every
+time you browse or seek in the table.  (This is especially significant
+on a network system)  This type of modeling is not possible with
+single dimensional arrays.  You also do not have to know the size of
+the array before it is created since you can dynamically resize the
+array with the aadd() function.
+<P>
+<P>
+<H2><A NAME="ss8.8">8.8 What is the meaning of the compiler warning "Ambiguous</A>
+reference: GETLIST"?</H2>
+
+<P> 
+GETLIST is an array variable that is created by CA-Clipper, by
+default, as the list of all currently used GET objects.  (The
+@...GET command preprocesses into an AADD (Getlist, ...) call,
+and READ references Getlist also.)
+<P>If you don't declare GETLIST in your code the compiler won't
+realize that the variable will in fact exist at runtime, hence
+the warning.  If this bothers you, you can put the statement
+MEMVAR GETLIST in a header file that is shared throughout the
+application, or even declare GETLIST as a LOCAL in functions that
+use GETs and READs if your program organization allows it.
+<P>
+<H2><A NAME="ss8.9">8.9 I am getting lockups running my CA-Clipper application under</A>
+DOS 6.0.  It worked under DOS 5.0.  What's going on?</H2>
+
+<P> 
+If you are running Clipper 5.01 apps <EM>and</EM> DOS 6.0 <EM>and</EM> are
+running EMM386.EXE <EM>and</EM> using its NOEMS command-line parameter,
+<EM>then</EM> you should also use the NOVCPI parameter with EMM386
+<EM>or</EM> include E0 in your CLIPPER environment variable.
+<P>
+<P> 
+This is due to a check that the Clipper 5.01 runtime performed
+to verify the existence of EMS that is not fully compatbile with
+the EMM386.EXE that comes with DOS 6.0.
+<P>
+<P>Another option, if you really need EMS memory, is to link in the object
+provided in EMM501.ZIP from The Oasis. This will allow S'87 and 5.01 to
+correctly detect EMM memory.
+<P>
+<P> 
+If you move to CA-Clipper 5.2e or 5.3b this problem goes away.
+<P>
+<H2><A NAME="ss8.10">8.10 Can you combine Borland C/C++ or Turbo C/C++ code with your</A>
+CA-Clipper applications?</H2>
+
+<P>
+<P>Last updated 2 February 1993:
+Contributions by Ed Boggan,
+Carl Nelson, 
+Nick Pombra, 
+Alex Matijaca, and
+<A HREF="mailto:mzurier@cris.com">Mark Zurier</A><P>
+<P>Yes, if you follow these guidelines:
+<P>
+<UL>
+<LI>Use large model only (the <CODE>-ml</CODE> command-line compiler switch).</LI>
+<LI>Use no floating point operations, and disable them with
+the <CODE>-f-</CODE> switch.</LI>
+<LI>Use no Borland library functions; you may use standard C
+functions if they are found in CLIPPER.LIB or LLIBCE.LIB.</LI>
+<LI>You may leave register variables on and/or optimize
+for registers/jumps/speed.</LI>
+<LI>You may use the <CODE>-v</CODE> switch to include debugging information
+in your object code for Turbo Debugger.</LI>
+<LI>Turn stack checking off.</LI>
+<LI>If you use inline assembly, push DS before doing anything
+and pop it when done, unless you are SURE your code doesn't
+do anything to affect DS.</LI>
+</UL>
+<P>One workable set of switches seems to be <CODE>-c -f- -ml -N-</CODE>.
+For optimized C code, try <CODE>-c -f- -ml -N- -Z -O -G -w</CODE>.
+<P>Zurier wrote later:
+Well, it's a little old and really only applies to Clipper Summer '87
+and 5.0 with BC++ 16-bit versions.  It's up to you, but if you include
+it, please put that caveat in there.  I neither use Clipper nor Borland
+anymore; I'm all Visual C++ and Java (Visual J++ for now due to the
+tight integration) and thank God the 32-bit world finally got rid of the
+stupid memory models &lt;g>.
+<P>In fact, based on that, it seems the article is way out of date.  I'd
+only use it if you think there are still 16-bit people out there.  I
+don't.
+<P>
+<H2><A NAME="ss8.11">8.11 Is there a way to recompile or relink the standard CA-Clipper</A>
+libraries to make CA-Clipper fully compatible with the Borlandcompilers?</H2>
+
+<P>No.  Floating point function calls are too tightly coupled with
+the compiler's code generation to allow that to be done.
+<P>It is possible to write BCD replacement functions for the very
+low-level functions that call the floating-point math
+libraries.  (They have names such as __DVADD() and can be found
+in the map file output from any decent linker.)  The problem
+with this approach is that any numeric _literals_ in the source
+code are already embedded into the object code as double-precision
+floats.  There does not appear to be a good way for a replacement
+math library to deal with the fact that sometimes it will be
+handed BCD numerics and float numerics at different times.
+<P>
+<H2><A NAME="ss8.12">8.12 How about C++?</A>
+</H2>
+
+<P>
+<P>Last updated 17 June 1991: contributions by Diane Lask
+<P> 
+Any C++ function which interfaces to your CA-Clipper code must be
+declared consistently as <CODE>extern "C" CLIPPER func (void)</CODE>
+<P>
+<P> 
+This is an ANSI linkage specifier which turns off "name mangling."
+One disadvantage is that if a function name is overloaded of course
+you may only access one instance of that function name from your
+CA-Clipper code.  (Otherwise how could CA-Clipper tell them apart?)
+<P>
+<P> 
+If your C++ code must call Extend API functions, then you should
+edit your copy of EXTEND.H or EXTEND.API to bracket all the
+function declarations with the following code:
+<P>
+<HR>
+<PRE>
+#ifdef __cplusplus
+extern "C" {
+#endif
+ 
+  /* Existing function declarations here. */
+ 
+#ifdef __cplusplus
+}
+#endif
+</PRE>
+<HR>
+<P>
+<P> 
+C++ code which is not called directly from your CA-Clipper
+application can be safely left "mangled."  For Borland C++ users,
+the normal prohibitions on use of floating point math remain.
+<P>
+<H2><A NAME="ss8.13">8.13 How do I compile Microsoft C 5.1 code?</A>
+</H2>
+
+<P> 
+The correct compiler switches are <CODE>/FPa /Gs /Oals /AL</CODE>.  You may
+use floating point math without restriction.
+<P>With CA-Clipper 5.3 I am not sure.  Anyone?
+<P>
+<H2><A NAME="ss8.14">8.14 What about Microsoft C 6.0?  And later?</A>
+</H2>
+
+<P>
+<P>Last updated 26 June 1992:
+contributions by 
+<A HREF="mailto:dcaton@compuserve.com">Don Caton</A><P>Use the undocumented <CODE>/Gh</CODE> compiler switch and the LLIBCA.LIB library
+from Microsoft C 5.1.  The library is available on the CLIPGER
+forum on Compuserve.
+<P>For those who do not read German fluently or who do not have
+regular access to Compuserve it might be easier to purchase
+the C 5.1 library from Microsoft as a "downgrade" from a
+licensed later version of their C/C++ compiler line.  The number
+to call, in the United States, is 800-426-9400.  At the recorded
+message press 2 to order the downgrade.  It costs USD 25.00, or
+USD 15.00 without printed documentation.  These prices only apply to
+registered users of Microsoft C or C++ compilers from release
+6.0 forward.
+<P>CA-Clipper 5.3 was compiled with Microsoft C version 8.0, so if
+you are using 5.3 just get the latest Microsoft C compiler.
+<P>
+<H2><A NAME="ss8.15">8.15 Can you use Borland's Turbo Debugger with the embedded C and assembler</A>
+code in your CA-Clipper application?</H2>
+
+<P>Yes.  For best results, compile the C code with the -v switch,
+assemble with /zi, and Turbo-link with /v.  Then just fire up
+TD with the name of your executable and set a breakpoint at
+the beginning of your C or assembler function of interest.
+<P>I have found that TD286, Borland's 80286 protected-mode debugger,
+works as well without crowding CA-Clipper code out of memory.
+Still you are probably better off testing your C/assembler code
+from a small "shell" CA-Clipper program to save run-time memory.
+<P>It is difficult to use TD386 with a CA-Clipper program since the
+former cannot coexist with the EMM386 expanded memory driver,
+and the later runs better with expanded memory.
+<P>
+<H2><A NAME="ss8.16">8.16 I want to write a C function that concatenates a list of</A>
+strings whose lengths are unknown at compile-time.  How can Ido this efficiently?</H2>
+
+<P>
+<P>Last updated 30 October 1991:
+contributions by 
+<A HREF="mailto:71230.1650@compuserve.com">Brian Marasca</A><P>If you're concerned about performance, the best possible solution
+would be to define a maximum string length beforehand.  If you can
+do that, this piece of code, submitted by Brian Marasca, is pretty
+high-performance:
+<P>
+<HR>
+<PRE>
+#define MAXLEN 120   /* Set this to the maximum required length. */
+ 
+CLIPPER cStrCat()
+{
+    char *p, *q, *buf ;
+    int cx = 1, parms = _parinfo ( 0 ) ;
+
+    q = buf = _xgrab (MAXLEN + 1) ;
+ 
+    while (parms--)
+    {
+         p = _parc (cx++) ;
+         while (*p) *q++ = *p++ ;
+    }
+    *q = '\0' ;       /* very important! */
+ 
+    _retc (buf) ;
+    _xfree (buf) ;
+}
+</PRE>
+<HR>
+<P>
+<H2><A NAME="ss8.17">8.17 I want to call my C or assembler function with a reference</A>
+parameter in a string.  Why can't you just use the pointer returnedby _parc() to modify a string parameter?</H2>
+
+<P>
+<P>Last updated 23 July 1991;
+Contributions by 
+<A HREF="mailto:73067.3332@compuserve.com">Ted Means</A><P>Clipper 5.0 performed under-the-hood memory optimizations that
+sometimes resulted in two strings being assigned the same pointer.
+<P>For example, if you did this:
+<P>
+<HR>
+<PRE>
+       X := "Some string"
+       Y := X
+</PRE>
+<HR>
+<P>In all likelihood Clipper would simply make a copy of the pointer
+rather than actually copying the string.  It sounds great in
+theory, because it saves memory.  But problems arose when a C or
+ASM routine attempted to modify X or Y by writing directly to the
+assigned memory.  Since the same pointer was assigned to two
+different memvars, they both got changed, even though that was
+not the intended effect.
+<P>So with the release of Clipper 5.01, Nantucket graciously
+provided a method for accessing strings that is more convenient. 
+If you call __StorCLen with a null pointer *before* calling
+__ParC, it warns Clipper that you plan to directly modify a
+__ParC pointer and Clipper will take whatever steps are necessary
+to make it safe to do so.
+<P>This gives the best of both worlds, in that Clipper can still
+perform its memory optimizations, but C and ASM programmers get
+the benefit of being able to directly modify strings.  This is
+all documented in the Release Notes, but briefly, if you need to
+write directly to a string, use the following sequence:
+<P>
+<UL>
+<LI>Call __ParCLen to get the string's length.</LI>
+<LI>Call __StorCLen with the length and a null pointer.</LI>
+<LI>Call __ParC to get a pointer to the string.  This
+pointer will be safe to write to.</LI>
+</UL>
+<P>Writing directly to a __ParC pointer without using this method is
+not sanctioned by Nantucket and is likely to cause problems. 
+Note, though, that if you don't need to write to the string you
+can simply call __ParC by itself.
+<P>
+<H2><A NAME="ss8.18">8.18 How do I call CA-Clipper code from C?  Can this even be done?</A>
+</H2>
+
+<P>
+<P>Last updated 25 November 1991; contributions by
+<A HREF="76370.1532@compuserve.com">Steve Larsen</A> and
+<A HREF="76656.1606@compuserve.com">Jobst Hensiek</A><P>With versions prior to 5.2, you have to set up Clip's internal
+EVAL stack properly with _xpushf() and _xpopf().  Afterwards,
+call _xdo() to execute the CA-Clipper function.  The whole thing is
+undocumented, and it is discouraged by CA because it requires
+the use of internal functions which are not guaranteed to remain
+unchanged from one CA-Clipper version to the next.  Most people
+spend weeks poking around the symbol tables to get this to work.
+<P>CA-Clipper 5.2e's well-documented Item API (Application Programming
+Interface) allows you to evaluate CA-Clipper expressions, and view
+or change CA-Clipper variables, directly from C code.  You can
+request this documentation free from CA if you have purchased
+CA-Clipper 5.2e.
+<P>It appears to be very difficult if not impossible to call
+CA-Clipper code successfully from within a C "main" program.  The
+environment must be CA-Clipper calling C calling CA-Clipper for
+this stunt to work.
+<P>
+<HR>
+<A HREF="clipper-9.html">Next</A>
+<A HREF="clipper-7.html">Previous</A>
+<A HREF="clipper.html#toc8">Contents</A>
+</BODY>
+</HTML>

@@ -1,0 +1,173 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.9">
+ <TITLE>Frequently Asked Questions (FAQ 2.31) about CA-Clipper and CA-Visual Objects: Everything else</TITLE>
+ <LINK HREF="clipper-11.html" REL=previous>
+ <LINK HREF="clipper.html#toc12" REL=contents>
+</HEAD>
+<BODY>
+Next
+<A HREF="clipper-11.html">Previous</A>
+<A HREF="clipper.html#toc12">Contents</A>
+<HR>
+<H2><A NAME="s12">12. Everything else</A></H2>
+
+<P>
+<H2><A NAME="ss12.1">12.1 Can DBF-type files be used in a client-server environment?</A>
+</H2>
+
+<P>Advantage XBase Server and Fortress are two server-based products
+that are designed to increase speed across network pathways.
+Here's what Phil Barnett had to say about the Advantage product:
+<P>"In Clipper, as we know it today, the index access requires many file
+accesses to retrieve the record pointer for the data we want to access. If
+I remember correctly, it takes around 20 packets to just get to the
+record, and 21 sends the request, and 22 returns the data packet to you.
+<P>"Contrast that with Advantage, where there is one packet to request the
+data, and a second packet to return the selected record. The actual
+index seeking occurs at the server level at bus speeds.
+<P>"Since there is a 10:1 reduction of network packets, you can expect a
+profound increase in access speed."
+<P>
+<H2><A NAME="ss12.2">12.2 When should you use the //badcache command-line switch?</A>
+</H2>
+
+<P>(Answer supplied by 
+<A HREF="mailto:76500.303@compuserve.com">InSystems Technologies</A>, 18 January 1995)
+<P>//BADCACHE should be used whenever something in your system will change the EMS
+page frame without notice.  In plain English, any TSR, device driver, or
+similar device that changes the page frame.  This includes the EMS version of
+the NetWare Shell for DOS (EMSNETx), the NetWare DOS Requester (if you use the
+/ME parameter), the Microsoft LAN Manager redirector (if "/LIM" appears in
+LANMAN.INI), the IBM LAN Server client (if "/EMS" appears in DOSLAN.INI), the
+EMS version of HyperDisk (HYPERDKE), etc.
+<P>
+<P>On the other hand, RUNning a program that uses EMS, such as WordPerfect, should
+not be a problem.
+<P>
+<P>The problem comes when I/O calls affect EMS and the I/O device doesn't restore
+the EMS page frame to its previous configuration.
+<P>
+<P>If performance is a consideration, you should avoid caches and LAN drivers that
+use EMS, since they are not only slightly slower than conventional memory based
+drivers, but they really put the brakes on Clipper.
+<P>
+<H2><A NAME="ss12.3">12.3 How do I get more free memory for my DOS RUN commands?</A>
+</H2>
+
+<P>(Answer supplied by William David Belew, 7 February 1995.)
+<P>Try Blinker's RUN replacement, SWPRUNCMD().
+<P>Add the line BLINKER EXECUTABLE EXTENDED (protected mode) or BLINKER
+EXECUTABLE DUAL (chooses real or protected mode at run time).  Note that C,
+assembly, and 3rd party libraries must be protected mode compatible.
+<P>
+<H2><A NAME="ss12.4">12.4 What's the format of a Clipper .dbf file?</A>
+</H2>
+
+<P>(Answer supplied by Phill Terry, 10 February 1995.)
+<P>The first record in a database (.dbf) header is 32 bytes in length
+and contains information describing the file as follows:
+<P>
+<PRE>
+Table: File description record
+------------------------------------------------------------------
+Offset      Format         Contents
+------------------------------------------------------------------
+0           03 or 083h     Signature Byte:
+                           03h - (.dbf) with no memo (.dbt) file
+                           083h- (.dbf) with memo (.dbt) file
+1           Year           Last update year without century
+2           01 to 12       Month of last update
+3           01 to 31       Day of last update
+4-7         Long           Number of records
+8-9         Word           Location in file where data begins
+                           (START)
+10-11       Word           Record length (field sizes plus 1)
+12-31       N/A            Reserved
+------------------------------------------------------------------
+</PRE>
+<P>
+<P>Note: When a database file is created, bytes 12 thru 31 are NUL
+filled.  Once a database (.dbf) file exists, care must be taken
+NOT to change reserved values since dBASE III PLUS uses these
+values where the Clipper DBFNTX/DBFNDX database drivers do not.
+<P>
+<P>Note, also, that the signature byte in dBASE-made .dbf files is
+different ... I can't remember the value of that byte, but it's NOT 03h
+or 83h ....
+<P>
+<P>Also, you can look up the format yourself in:
+<PRE>
+Chapter 11
+Clipper Programmer Guide
+Rick Spence
+(the Lance A. Leventhal Data Based Advisor Series)
+LCCC No. 90-53257
+Microtrend Books
+Slawson Communications, Inc
+165 Vallecitos de Oro
+San Marcos, CA 92069
+</PRE>
+<P>
+<H2><A NAME="ss12.5">12.5 How do I create my own .LIB files?</A>
+</H2>
+
+<P>You need a program called (surprise!) LIB.EXE. You can download a copy from
+<A HREF="ftp://ftp.qbss.co.uk/dos/misc/MSLIB.EXE">ftp://ftp.qbss.co.uk/dos/misc/MSLIB.EXE</A>. Run <CODE>lib /?</CODE> to
+get help on using the tool.
+<P>
+<H2><A NAME="ss12.6">12.6 How do I keep TBrowse from messing up the record pointer?</A>
+</H2>
+
+<P>(Answer supplied by 
+<A HREF="mailto:Ian@darkblak.demon.co.uk">Ian Day</A>, 14 February 1995.)
+<P>When repositioning a TBrowse, you may have found the right record
+but the :refreshall() and :stabilize() calls move the record pointer
+elsewhere.
+<P>This is a common problem.  When you signal a RefreshAll() the tbrowse
+internal skips back to the first visible record, you can stop this
+happening by forcing the tbrowse row indicator to the top of the browse,
+but you must do this before you issue a RefreshAll().
+<P>So, something that may work for you would be:
+<P>
+<HR>
+<PRE>
+    dbSeek(cSomething)
+ 
+    oBrowse:RowPos := 1        // So it doesn't need to skip back
+    oBrowse:RefreshAll()
+    oBrowse:ForceStable()
+</PRE>
+<HR>
+<P>
+<P>
+<H2><A NAME="ss12.7">12.7 Clipper and Novell's Transaction Tracking System</A>
+</H2>
+
+<P>For a good article on this, check out Clipper Advisor, March/April 1994,
+"Using Netware TTS: The Real Story".
+<P>First of all, it's fine for single-user apps.
+<P>For multi-user apps, problems arise because of a mismatch between
+Clipper's locking scheme and TTS.
+<P>In DBFs, Clipper's default record locking is to lock byte
+(1 billion + RECNO()) from the beginning of the file. TTS will
+actually lock the data being written to. So another user trying
+to go thru the record will get "access denied".
+<P>In indexes, you may get TTS locks at several places in the index
+file for a single field modification. When the user tries to 
+browse past one of the locked places, you may get an "access denied"
+or a "corrupted index" error.
+<P>There are other problems too. I would really advise reading the
+article before trying TTS on data and index files for a multi-user
+Clipper application.
+<P>The good news for you is that you can easily turn off TTS for just
+the files used by the Clipper apps - use FLAG to get rid of the
+"T" attribute for the relevant files.
+<P>
+<HR>
+Next
+<A HREF="clipper-11.html">Previous</A>
+<A HREF="clipper.html#toc12">Contents</A>
+</BODY>
+</HTML>

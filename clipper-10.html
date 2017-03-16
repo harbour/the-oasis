@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.9">
+ <TITLE>Frequently Asked Questions (FAQ 2.31) about CA-Clipper and CA-Visual Objects: The year 2000</TITLE>
+ <LINK HREF="clipper-11.html" REL=next>
+ <LINK HREF="clipper-9.html" REL=previous>
+ <LINK HREF="clipper.html#toc10" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="clipper-11.html">Next</A>
+<A HREF="clipper-9.html">Previous</A>
+<A HREF="clipper.html#toc10">Contents</A>
+<HR>
+<H2><A NAME="s10">10. The year 2000</A></H2>
+
+<H2><A NAME="ss10.1">10.1 Is A.D. 2000 a leap year?</A>
+</H2>
+
+<P>Yes.
+<P>
+<H2><A NAME="ss10.2">10.2 Does Clipper take into account the end of the millenium?</A>
+</H2>
+
+<P>Yes, in several ways:
+<UL>
+<LI>Dates are stored in DBF files in YYYYMMDD format, so Clipper has a
+way to distinguish, for example, 1901 from 2001 in your data.</LI>
+<LI>You can
+cause your date-valued GETs to display with all four year digits with
+the <CODE>SET CENTURY ON</CODE> command.</LI>
+<LI>You can control the interpretation
+of two-digit date entries with the <CODE>SET EPOCH</CODE> command.</LI>
+</UL>
+<P>
+<HR>
+<A HREF="clipper-11.html">Next</A>
+<A HREF="clipper-9.html">Previous</A>
+<A HREF="clipper.html#toc10">Contents</A>
+</BODY>
+</HTML>

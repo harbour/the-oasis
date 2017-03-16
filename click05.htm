@@ -1,0 +1,2059 @@
+<HTML>
+<HEAD><TITLE>Changes</TITLE></HEAD>
+<BODY BACKGROUND=click.jpg>
+<P>
+<CENTER><H1><I>Click! 2.03 Source Code Reformatter</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Changes:</I></B></H2>
+</TH><TH>
+   <A HREF="click05.htm#01">Release 2.03</A><BR>
+   <A HREF="click05.htm#02">Release 2.02</A><BR>
+   <A HREF="click05.htm#03">Release 2.01</A><BR>
+   <A HREF="click05.htm#04">Release 2.00</A><BR>
+   <A HREF="click05.htm#05">Release 1.13b4</A><BR>
+   <A HREF="click05.htm#06">Release 1.13b3</A><BR>
+   <A HREF="click05.htm#07">Release 1.13b2</A><BR>
+   <A HREF="click05.htm#08">Release 1.13b1</A><BR>
+   <A HREF="click05.htm#09">Release 1.12</A><BR>
+   <A HREF="click05.htm#10">Release 1.11</A><BR>
+   <A HREF="click05.htm#11">Release 1.10</A><BR>
+   <A HREF="click05.htm#12">Release 1.09</A><BR>
+   <A HREF="click05.htm#13">Release 1.08</A><BR>
+   <A HREF="click05.htm#14">Release 1.07</A><BR>
+   <A HREF="click05.htm#15">Release 1.06</A><BR>
+   <A HREF="click05.htm#16">Release 1.05</A><BR>
+   <A HREF="click05.htm#17">Release 1.04</A><BR>
+   <A HREF="click05.htm#18">Release 1.03</A><BR>
+   <A HREF="click05.htm#19">Release 1.02</A><BR>
+   <A HREF="click05.htm#20">Release 1.01</A><BR>
+   <A HREF="click05.htm#21">Release 1.00</A><BR>
+   <A HREF="click05.htm#22">.999 beta</A><BR>
+   <A HREF="click05.htm#23">.998 beta</A><BR>
+   <A HREF="click05.htm#24">.997 beta</A><BR>
+   <A HREF="click05.htm#25">.996 beta</A><BR>
+   <A HREF="click05.htm#26">.995 beta</A><BR>
+   <A HREF="click05.htm#27">.994 beta</A><BR>
+   <A HREF="click05.htm#28">.993 beta</A><BR>
+   <A HREF="click05.htm#29">.992 beta</A><BR>
+   <A HREF="click05.htm#30">.991 beta</A><BR>
+   <A HREF="click05.htm#31">.99 beta</A><BR>
+   <A HREF="click05.htm#32">.98 beta</A><BR>
+   <A HREF="click05.htm#33">.97 beta</A><BR>
+   <A HREF="click05.htm#34">.96 beta</A><BR>
+   <A HREF="click05.htm#35">.95 beta</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Release 2.03</I></H3></A>
+
+
+Cleaned up documentation.
+
+
+---
+
+
+Added five directives:
+
+// options are YES, NO
+// deflate mode removes spaces
+
+// following ({[ and preceding ]})
+DEFLATE_(=NO
+DEFLATE_{=NO
+DEFLATE_[=NO
+
+// following , (comma)
+DEFLATE_,=NO
+
+// both sides of +
+DEFLATE_+=NO
+
+Many people have asked for this. If you turn any of these on, there is
+a slight speed impact.
+
+<A NAME="02"><BR><P><H3><I>Release 2.02</I></H3></A>
+
+It was brought to my attention that Click! broke this line of code.
+
+cBlock := { || if( !aX[dict-&#62(recno())][1]==NIL, {4,5}, {1,2} ) }
+
+I found two problems.
+
+You could not turn off the ][ conversion feature because of a typo in
+the code. This is fixed.
+
+Click! thinks that the second array reference, [1], is a string
+delimited with [ and ]. This caused it to be treated as a single literal
+instead of 3 parts of the line.
+
+To fix this bad behaviour, I modified the ][ conversion routine to copy
+the remainder of the 'bracketed text' to the same cell as the ,.
+
+<A NAME="03"><BR><P><H3><I>Release 2.01</I></H3></A>
+
+Mods 1 and 2 were by Douglas Woodrow &#60doug@acuity-ltd.demon.co.uk&#62
+
+1) the "LIKEINFILE" setting does not work for commands (it uses &#62 UPPER
+   instead)
+
+   This was caused by the c version of function no_ast(): it works
+   directly on the contents of the variable passed (i.e. by
+   reference), and hence always leaves the aCommands array with upper
+   case copies of the commands. I have fixed this by simply
+   re-instating your original no_ast() function in cmd_list.prg, so
+   no_ast.obj no longer needs to be linked in.  This has very
+   negligible impact on speed of operation when dealing with lots of
+   source code, as no_ast() is only called when processing the .ini
+   file at startup.  I have not included my version of the build
+   files, as I had to change them for my development environment (and
+   dbfcdx driver instead of six etc.)
+
+
+2) the setting specified for functions is always ignored (it uses
+   the setting specified for commands instead, and this time
+   LIKEINFILE *does* work).
+
+This one was simply caused by using variable cComCase instead of
+cFunCase in the relevant sections of click.prg.
+
+Mod 3 was by  "Peter Townsend" &#60cephas@tpgi.com.au&#62
+
+3) Phil, thanks for the Click! source.  I was looking at
+   FILNPATH.PRG when I found a UDF (UnDocumented
+   Feature).  As written, fileinpath will only find a
+   file in the nominated path if the file is in the
+   directory specified in the last portion of the path.
+
+   So if:
+
+    path == "c:\windows;c:\windows\command"
+    ? fileinpath( "win.com" ) =&#62 "win.com"
+
+    but if:
+
+    path == "c:\windows\command;c:\windows"
+    ? fileinpath( "win.com" ) =&#62 "c:\windows\win.com"
+
+   I've attached a modified version so you can see what I
+   mean.
+
+<A NAME="04"><BR><P><H3><I>Release 2.00</I></H3></A>
+
+The general release version of Click! for OO code.
+
+<A NAME="05"><BR><P><H3><I>Release 1.13b4</I></H3></A>
+
+Modified the screen writing code to move the divider bar between the top
+and bottom windows to the center, regardless of the screen resolution.
+
+Now, Click looks great in larger screen resolutions.
+
+---
+
+Linked with Blinker 5. Click! is now compressed with Blinker file
+compression instead of WWPACK.EXE, allowing me to link Click! in
+protected mode.
+
+---
+
+Version 1.13b3 formatted classes with an extra empty line, like:
+
+Class Foo
+
+
+      Method init
+
+EndClass
+
+The extra empty line is now removed.
+
+Class Foo
+
+      Method init
+
+EndClass
+
+---
+
+Click! previously formatted a method in a class without any scope
+modifier like:
+
+Class Foo
+      Method init
+EndClass
+
+It is now only indented a single level.
+
+Class Foo
+   Method init
+EndClass
+
+<A NAME="06"><BR><P><H3><I>Release 1.13b3</I></H3></A>
+
+Click! did not know how to deal with something like...
+
+@:bar()
+
+...and incorrectly formatted it as...
+
+@ :bar()
+
+This is fixed.
+
+---
+
+Renamed MY_TABLE_OPENING_FUNCTION to MY_TABLE_FUNCTION in CLICK.INI.
+
+--
+
+Added a new Click! entry similar to MY_TABLE_FUNCTION, except for index
+functions.
+
+The new entry is named MY_INDEX_FUNCTION, and can contain several
+functions delimited by |, just like the table group.
+
+---
+
+Previously, Click! compared MY_TABLE_FUNCTION, the customizable table
+function list to the first word on each line. Now, Click! compares the
+customizable list to every word on the line.
+
+Using delimited settings like these... (use | to add more functions)
+
+MY_TABLE_FUNCTION=D_OPEN|D_CLOSE|D_ZAP
+MY_INDEX_FUNCTION=D_INDEX|D_ORDER
+
+...and code like this...
+
+if d_close( 'myarea' )
+endif
+
+if dbusearea( 'another' )
+   index on ( temp ) to stuff tag more
+endif
+
+d_zap( 'myfile' )
+
+do while d_open( cSomeFile )
+enddo
+
+if dbcreateind()
+endif
+
+if d_order( csomealias ) == 12
+endif
+
+if d_index( cSomeFile )
+endif
+
+...Click! will detect correctly, and add to the Files or Indexes list...
+
+*+       Tables: if d_close( 'myarea' )
+*+               if dbusearea( 'another' )
+*+               d_zap( 'myfile' )
+*+               do while d_open( cSomeFile )
+*+
+*+      Indexes: index on ( temp ) to stuff tag more
+*+               if dbcreateind()
+*+               if d_order( csomealias ) == 12
+*+               if d_index( cSomeFile )
+
+---
+
+Previously, if you set INDENT_FUNCTION=YES, Click! would leave the final
+return dangling indented, instead of deindented.
+
+This is fixed. The last return is identified by a read ahead scheme. If
+you use this feature, and find a 'last return' which is dangling, I need
+to see the code following that return.
+
+---
+
+Added a new CLICK.INI directive, INDENT_LOCALS=NO, which overrides
+indenting of any line starting with LOCA PRIV MEMV STAT PUBL FIEL if
+INDENT_FUNCTION=YES.
+
+---
+
+if() reported as an &#60unresolved function&#62 in the function table.
+
+Fixed.
+
+---
+
+a[ 1 ][ 1 ][ 1 ]
+
+used to come out as:
+
+a[ 1 ] [ 1 ] [ 1 ]
+
+Fixed. Spaces are no longer inserted.
+
+A new option is added in CLICK.INI to convert it to the other style:
+
+CONVERT_][_TO_,=YES
+
+Converts:
+
+a[ 1 ][ 1 ][ 1 ]
+
+to
+
+a[ 1, 1, 1 ]
+
+---
+
+CREATE CLASS was not recognized as CLASS.
+
+Fixed.
+
+---
+
+END CLASS was not always found, but ENDCLASS always worked.
+
+Fixed.
+
+<A NAME="07"><BR><P><H3><I>Release 1.13b2</I></H3></A>
+
+Modified MY_TABLE_OPENING_FUNCTION to handle multiple functions.
+
+Now, you can declare as many file opening, closing and modifying
+functions as you need, simply by delimiting each one with the pipe |.
+
+MY_TABLE_OPENING_FUNCTION=D_OPEN|D_CLOSE|D_ZAP
+
+---
+
+Fixed CONVERT_*_TO_// so it would leave a space after the //
+
+Otherwise:
+
+*********
+
+converted to
+
+//*******
+
+and the second and third characters looked like /*, turning on block
+commenting.
+
+Now, it converts to
+
+// *******
+
+---
+
+Modified Click! so that it understands END CLASS as well as ENDCLASS, for
+Class(y) support.
+
+---
+
+Added END CLASS to Click.ini
+
+---
+
+Added CLEAN_UP_INCLUDES=YES to CLICK.INI.
+
+This Determines if #includes will be beautified. Beautification consists
+of lower case #define, converting the delimiters to "" and upper case
+file name.
+
+#INCLUDE 'somefile.CH'
+#include "nextFILE.CH"
+
+becomes
+
+#include "SOMEFILE.CH"
+#include "NEXTFILE.CH"
+
+Prior to this version, you had no control over this clean up and it
+defaulted to YES.
+
+<A NAME="08"><BR><P><H3><I>Release 1.13b1</I></H3></A>
+
+Click! begins it's ascent into object oriented awareness!
+
+----
+
+Not that it makes any difference, but I added:
+
+SET EPOCH TO YEAR( DATE() ) - 50
+
+Better safe than sorry.
+
+----
+
+Added ALIGN_CLASS_IN_THE_ALIGNER to CLICK.INI.
+
+---
+
+Added METHOD to the declaration buster
+
+---
+
+Added METHOD and CLASS METHOD to Click.ini, and modified Click! to treat
+them like FUNCTION and PROCEDURE, including header creation.
+
+---
+
+Added METHOD, CLASS, VAR, ENDCLASS, INIT, EXIT to Click.ini
+
+---
+
+Click! now removes spaces before : when it's appropriate. OO stuff now
+looks like:
+
+::windowStack[1]:setFrameState( XBPDLG_FRAMESTAT_NORMALIZED )
+oSubMenu := XbpMenu():new( oMenu )
+
+instead of:
+
+::windowStack[1] :setFrameState( XBPDLG_FRAMESTAT_NORMALIZED )
+oSubMenu := XbpMenu() :new( oMenu )
+
+---
+
+Click! had a problem converting this:
+
+store chr( toets ) to x
+
+This is fixed. It now converts to:
+
+x := chr( toets )
+
+---
+
+Fixed the identification and headers on INIT PROCEDURE and EXIT PROCEDURE.
+
+---
+
+There was a problem with the declaration buster when avoiding
+declaration lines with the key words ALL, NEXT, WHILE and FOR which
+would avoid the breaking up the line even if any of those words were
+subparts of variables.
+
+Now, Click! scans the parsed array for exact matches. This allows lines
+like:
+
+local INSCREEN,XWIDTH,XLENGTH,XSHALLOW,XDEEP,XGALLONS,AVEDEPTH,mult
+
+to be broken up instead of avoided. (XGALLONS contains ALL)
+
+<A NAME="09"><BR><P><H3><I>Release 1.12</I></H3></A>
+
+( From CLICK.INI )
+
+// Convert * to // when && is starting a line
+CONVERT_*_TO_//=YES
+
+This will convert * comments to // comments
+
+* this is a comment
+
+becomes
+
+// this is a comment
+
+---
+
+Fixed problem with # directives being manipulated.
+
+Now, # directives are not processed at all.
+
+---
+
+Fixed problem with macro expansion while using a 'restore from' command.
+
+Now, any RESTORE FROM command receives simple spacing. The list of
+Clipper commands which obey simple spacing are as follows:
+
+USE
+COPY
+SAVE
+ERASE
+CREATE
+COPY TO
+RESTORE
+SET COLO
+SET ORDE
+COPY FILE
+DELETE FILE
+
+<A NAME="10"><BR><P><H3><I>Release 1.11</I></H3></A>
+
+REPLACE ALL/NEXT/WHILE/FOR lines with multiple changes were being
+converted to broken code.
+
+The problem was in the Declaration Buster. The Declaration Buster is now
+able to distinguish a compound command, and entirely avoid it. It now
+avoids converting any REPLACE containing ALL, NEXT, WHILE or FOR.
+
+What was happening was:
+
+replace all x with y, w with z
+
+was processed by Pass 1 into:
+
+replace all x with y
+replace w with z
+
+and then in pass 2:
+
+replace all x with y
+field-&#62w := z
+
+Fixed by avoidance.
+
+---
+
+There was a problem with alignment and recognition of @ SAY GET lines
+when the command was followed by a value in parenthesis, such as:
+
+@  7, 25 get rdbf1 picture "@!"  color (cCGetColor)
+@  9, 25 get rprefunc picture "@!" valid ChkPreFunc() color (cCGetColor)
+@ 10, 25 get rpostfunc picture "@!" valid MakeStru() color (cCGetColor)
+@ 11, 25 get reptype picture "@!" valid REP-&#62reptype$"RP" color (cCGetColor)
+@ 12, 25 get custom picture "@!" valid REP-&#62custom$"YN" color (cCGetColor)
+
+Click! failed to recognize the COLOR clause because it appeared to be a
+function. Click! now uses 'SAY |GET |PICT|COLO|WHEN|RANG|VALI' to detect
+@ SAY GET clauses.
+
+This also caused type 3 @ SAY GET output to fail compile due to a missing ;
+
+This is repaired.
+
+---
+
+Due to a problem with IF FUNCTION/COMMAND detection combined with a
+problem with the line continue flag, the following code would cause a
+control underflow because Click! was not breaking the line up correctly.
+
+if empty(detail);delete;result:=1;endif
+
+This was fixed but not documented in 1.10
+
+<A NAME="11"><BR><P><H3><I>Release 1.10</I></H3></A>
+
+IF lPrint := MESSYN( 'DESTINO', 'IMPRESORA', 'PANTALLA' )
+
+The IF was being treated wrong, and was being combined with the lPrint.
+( the part of Click! that aligns := was fooled )
+
+This is fixed.
+
+---
+
+Breaking of multipart lines with continue (;) into individual lines was
+broken. This is fixed.
+
+---
+
+I fixed some code in Click! that locked the Declaration Buster into a
+continuous loop under certain conditions. This is fixed.
+
+---
+
+DBCREATE() alignment was broken. It is fixed.
+
+<A NAME="12"><BR><P><H3><I>Release 1.09</I></H3></A>
+
+1.09 makes a change to the way that the conversion of old style function
+calls are done. After creating 1.08, I was informed that conversion of
+DO/WITH function calls to formal function/parameters changes the way the
+variables are passed. DO/WITH passes all variables by reference, but
+function calls do not. Now, the conversion places an @ in front of each
+parameter. Sometimes this will break the code because the @ sign is an
+illegal operator. See below for what to do if you get C2009 errors..
+
+This now defaults to NO
+
+CONVERT_OLD_STYLE_FUNCTIONS=NO
+
+With this set to YES, ...
+
+do test
+do test // a comment
+
+do test with a, c, somevar
+do test with a, c, somevar // and a comment
+
+... becomes ...
+
+test()
+test()              // a comment
+
+test( @a, @c, @somevar )
+test( @a, @c, @somevar )                   // and a comment
+
+... and a blazing warning screen appears when Click! is set to run with
+this option turned on, because of the potential of compiler error C2009
+occuring because of the pass by reference on all parameters.
+
+If you get C2009 compiler errors after using this option, remove the
+offending @ in the parameter list and recompile.
+
+<A NAME="13"><BR><P><H3><I>Release 1.08</I></H3></A>
+
+Click! now does a few things with # directives.
+
+1. If a # is followed by a space, the space is removed
+
+... and only for #include ...
+
+2. The word INCLUDE is converted to lower case
+3. The filename is converted to upper case
+4. The delimiters on the filename are changed to " if they are '
+
+So...
+
+# INCLUDE 'filename.ch'
+
+... becomes ...
+
+#include "FILENAME.CH"
+
+---
+
+The conversion of line elements for alignment of := was too aggressive.
+
+I changed it so that it only tries to align := on lines that start with
+variables. This works much better.
+
+---
+
+Optimized a few more places in the code in an attempt to squeeze every
+ounce of speed out of Click!. Found a couple of pretty good speed
+improvements.
+
+---
+
+The Declaration Buster can now convert older style code to use the
+incremental operators ++, --, +=, -=, /=, *= and ^=
+
+CONVERT_TO_INCREMENTOR=YES
+
+Code style like:
+
+s = s + 1
+s := s - 1
+x := x + ( anyvar + anyfunc() )
+test=test-1// with a comment
+q = q * 14
+
+... now converts to ...
+
+s ++
+s --
+x += ( anyvar + anyfunc() )
+test --             // with a comment
+q *= 14
+
+It will not convert more complex forms, like:
+
+x[ 2 ] = x[ 2 ] + 1
+
+---
+
+The Declaration Buster can now convert the old style function calls to
+the new style. The CLICK.INI directive which controls this is:
+
+CONVERT_OLD_STYLE_FUNCTIONS=YES (defaults to NO)
+
+With this set to YES, ...
+
+do test
+do test // a comment
+
+do test with a, c, somevar
+do test with a, c, somevar // and a comment
+
+... becomes ...
+
+test()
+test()              // a comment
+
+test( a, c, somevar )
+test( a, c, somevar )                   // and a comment
+
+<A NAME="14"><BR><P><H3><I>Release 1.07</I></H3></A>
+
+There is a new option in The Aligner which will eliminate duplicate
+empty lines. This allows me to do nicer formatting around function and
+source headers and footers, and removes extra empty lines from your
+source.
+
+REMOVE_DUPLICATE_EMPTY_LINES=YES
+
+---
+
+The Aligner was previously only able to align := when it was the third
+element on a line. Now, it can handle more complex alignments, so ...
+
+y[ 2,MANIFEST ]='Hello'
+x    := 11
+z[function(),variable]='somevalue'
+
+...becomes...
+
+y[ 2, MANIFEST ]          := 'Hello'
+x                         := 11
+z[ function(), variable ] := 'somevalue'
+
+---
+
+On the second line, the first = sign was being converted to :=, but that
+was improper, since it is a continued line. This is fixed.
+
+if CFIRSTCHAR = chr( 10 ) .or. CFIRSTCHAR = chr( 12 ) .or. ;
+           CFIRSTCHAR = chr( 13 ) .or. CFIRSTCHAR = chr( 26 )
+   CLINE := substr( CLINE, 2 )
+endif
+
+---
+
+Someone was complaining that comments were lost on variable declarations.
+
+I can't find anything wrong. This...
+
+local x := 1 // this is a comment
+local y      // this is also a comment
+local z, w   // two variables on a single line
+
+... comes out looking like ...
+
+local x := 1        // this is a comment
+local y             // this is also a comment
+local z             // two variables on a single line
+local w             // two variables on a single line
+
+If anyone can provide a specific example which breaks, please do.
+
+---
+
+The declaration buster was ltrim()ing all lines between the text and
+endtext commands.
+
+This is corrected.
+
+The declaration buster was making #include into # include
+
+This is corrected.
+
+(I don't think that either of these were a problem outside of creating 1.07)
+
+---
+
+Because of the while on the continued line, this used to make a mess.
+
+if mfilter == TRUE
+   copy to ( cTempFile ) for eval( miofield2 ) .and. ;
+           eval( mfiltfield ) ;
+           while eval( use_dates )
+else
+   copy to ( cTempFile ) for eval( miofield2 ) ;
+           while eval( use_dates )
+endif
+
+Now, control structure identifiers are ignored if they are on a
+continued line.
+
+---
+
+The part of Click! which broke the .not. from comp_elem was broken.
+
+if line_disp = SUBSTR(linesrch[i],2,19) .and. .not.comp_elem
+endif
+
+This parses correctly now. This was particularly bad, since it sent
+Click! to the error exit.
+
+---
+
+Click! now correctly removes the space between ! and = when it is the
+first element of a continued line.
+
+do while x == 1 .and. y ;
+         != 7
+
+no longer creates
+
+do while x == 1 .and. y ;
+         ! = 7
+
+which caused a compiler error.
+
+<A NAME="15"><BR><P><H3><I>Release 1.06</I></H3></A>
+
+Removed from CLICK.INI...
+
+TABS2SPACES=3
+SMART_ALIGN_ASSIGN=14
+SMART_ALIGN_DECLARE=20
+
+The Aligner makes these unnecessary, so I removed the older code to
+speed up the process a little.
+
+---
+
+There was a problem with Click! removing comments on declarations with
+no assignment. (only in declaration buster) It is fixed.
+
+---
+
+Click! was case sensitive on TABLE and INDEX references. Now it is not.
+
+---
+
+Click! will allow you to designate a function name which you use to open
+your files, so the Table tracking routine can work on highly customized
+code.
+
+// Use this if you have a dictionary function that opens files
+// This will allow Click! to track table openings via your function
+MY_TABLE_OPENING_FUNCTION=D_OPEN
+
+<A NAME="16"><BR><P><H3><I>Release 1.05</I></H3></A>
+
+Added some C code to speed up the array sort during startup.
+
+---
+
+Click! can now incorporate a Table and Index cross reference into each
+source module header, and can create the list of all modules using files
+and indexes.
+
+The following CLICK.INI entries control this behaviour.
+
+TABLE_XREF_FILE=TBL_CROS.TXT
+
+// options are YES, NO
+// please note that you must set ADD_CLICK_HEADERS=YES
+TABLE_XREF_INTO_SOURCE=YES
+
+// options are YES, NO
+// please note that you must set ADD_CLICK_HEADERS=YES
+INDEX_XREF_INTO_SOURCE=YES
+
+---
+
+Click! now recognizes when a Clipper FUNCTION or COMMAND is being used
+as something other than a function or command.
+
+New rules are:
+
+If a Clipper function is not followed by a (, then it not evaluated as a
+Clipper function.
+
+/*
+I suppose that means I should convert:
+DO SOMEFUNC with a, b, c
+...to...
+SOMEFUNC( a, b, c )
+...in PASS 1
+*/
+
+If a Clipper command is found within () or {} or [], then it not
+evaluated as a Clipper command.
+
+This will allow code like ...
+
+#define TOP     a[1]
+#define LEFT    a[2]
+#define BOTTOM  a[3]
+#define RIGHT   a[4]
+
+aadd(envSTAck_, { row(), col(), setcursor(curs_size), setcolor(newcolor), ;
+     if(valtype(coords) == "A", { TOP, LEFT, BOTTOM, RIGHT, ;
+             savescreen(TOP, LEFT, BOTTOM, RIGHT) }, NIL) } )
+
+... to continue to work, even though I find using reserved words as
+    variables or manifest constants an undesirable style ...
+
+Also, prequalifying what can't be a function or a command has led to a
+significant reduction in processing time!
+
+---
+
+The Aligner now recognize and align arrays destined for DBCREATE(),
+so that code like...
+
+somevar := {{ 'XXX', 'C', 123, 0 },;
+           { 'YYYYY', 'C', 99, 0 },;
+           {'Z','D',8,0},;
+           { 'AFIELD', 'C', 2, 0 } }
+
+... ends up looking like ...
+
+somevar := { { 'XXX'   , 'C', 123, 0 }, ;
+             { 'YYYYY' , 'C',  99, 0 }, ;
+             { 'Z'     , 'D',   8, 0 }, ;
+             { 'AFIELD', 'C',   2, 0 } }
+
+---
+
+Click! now understands when [ and ] are being used as string delimiters.
+
+So...
+
+x := [asdfasdf'"asdf]
+? [this works'"]
+x := somefunc( [this works, too] )
+
+...will all be recognized as a string being delimited by [].
+
+---
+
+Click! can now convert && to // when found as a comment marker.
+
+( in CLICK.INI )
+CONVERT_&&_TO_//=YES
+
+So...
+
+if x && test
+...becomes...
+if x        // test
+
+...but...
+
+if x &&&&&&&& test
+...becomes...
+if x        //&&&&&& test
+
+---
+
+STORE conversion modified to eliminate this...
+
+for L_count = 1 to 5
+   store    " " to Em_Benefit[L_count,1]
+   store   0.00 to Em_Benefit[L_count,2]
+next
+
+from becoming ...
+
+for L_count = 1 to 5
+   Em_Benefit[ L_count := 1 ] := " "
+   Em_Benefit[ L_count := 2 ] := 0.00
+next
+
+Now, it correctly identifies internal commas and processes like:
+
+for L_count = 1 to 5
+   Em_Benefit[ L_count, 1 ] := " "
+   Em_Benefit[ L_count, 2 ] := 0.00
+next
+
+---
+
+Click! has an option to end it's run by returning to DOS with the
+original screen and color setting, pausing for a keystroke to end the
+run.
+
+RESTORE_SCREEN_ON_EXIT=YES
+
+<A NAME="17"><BR><P><H3><I>Release 1.04</I></H3></A>
+
+Commands with a length of 4 or less were not being recognized correctly.
+
+This is fixed.
+
+index on DEPARTMENT to( TEMPRECP )
+
+now processes into:
+
+index on DEPARTMENT to ( TEMPRECP )
+
+---
+
+Added the ability to force recreation of the CLICK.DBF and CLICK.NSX
+files. Any of the following methods...
+
+CLICK /REBUILD  &#60Enter&#62
+CLICK /UPDATE   &#60Enter&#62
+CLICK CLICK.DBF &#60Enter&#62
+
+...will rebuild these two files ( according to the master CLICK.INI )
+and quit.
+
+---
+
+Added more options for scanning libraries for function cross reference.
+
+1: You specify that you want to use the LIB= environment path. (this is
+   the way it worked before.)
+
+2: You specify a path or set of paths, just like the environment, except
+   in CLICK.INI.
+
+3: You specify that you want CLICK.EXE to search your hard drive for
+   every library in every directory, even including multiple drives and
+   network drives. This one might take longer, but creates the ultimate
+   cross reference.
+
+// options are ENVIRONMENT, (specified path), DRIVES
+//MAKE_CLICK_DBF_FROM=ENVIRONMENT
+//MAKE_CLICK_DBF_FROM=C:\CLIPPER5\LIB;E:\GRUMP52\LIB;F:\FUNCKY\LIB
+MAKE_CLICK_DBF_FROM=DRIVES
+
+---
+
+If you select DRIVES in the above step, you can limit how deep the
+recursion level will go with...
+
+RECURSION_LIMIT=N
+
+... means that it will only recurse the first N-1 levels and will skip
+all N level directories and below.
+
+---
+
+If you created a custom CLICK.INI file and placed it in a local
+directory, CLICK.EXE wanted to build another copy of CLICK.DBF and
+CLICK.NSX. This is corrected, so no matter how many copies of CLICK.INI
+you have, there is only one master function to library cross reference.
+
+---
+
+Added ability to turn off the DBCREATE( aligner and leave other sections
+of The Aligner working. From CLICK.INI...
+
+ALIGN_DBCREATE_IN_THE_ALIGNER=YES
+
+---
+
+Tightened up the code which decides if a DBCREATE follows a prescribed
+pattern, and avoids alignment if this pattern is not found.
+
+The Aligner will now only align DBCREATE() arrays if they follow the
+format shown here.
+
+So, this:
+
+dbcreate( 'filename.dbf', { { 'xxxxx', 'C', 23, 0 }, ;
+                            { 'yyy', 'D', 8, 0 }, ;
+                            { 'yy', 'C', 8, 0 }, ;
+                            { 'yuu', 'D', 8, 0 }, ;
+                            { 'yijiiiyy', 'N', 9, 2 }, ;
+                            { 'yhhfyy', 'D', 8, 0 } } )
+
+ends up looking like this:
+
+dbcreate( 'FILENAME.DBF', { { 'XXXXX'   , 'C', 23, 0 }, ;
+                            { 'YYY'     , 'D',  8, 0 }, ;
+                            { 'YY'      , 'C',  8, 0 }, ;
+                            { 'YUU'     , 'D',  8, 0 }, ;
+                            { 'YIJIIIYY', 'N',  9, 2 }, ;
+                            { 'YHHFYY'  , 'D',  8, 0 } } )
+
+Any DBCREATE() which does not follow the above format is not changed,
+code such as...
+
+local temp := {}
+
+aadd( temp, { 'xxxxx', 'C', 23, 0 } )
+aadd( temp, { 'yyy', 'D', 8, 0 } )
+aadd( temp, { 'yy', 'C', 8, 0 } )
+aadd( temp, { 'yuu', 'D', 8, 0 } )
+aadd( temp, { 'yijiiiyy', 'N', 9, 2 } )
+aadd( temp, { 'yhhfyy', 'D', 8, 0 } )
+
+dbcreate( filename, temp )
+
+...is ignored.
+
+<A NAME="18"><BR><P><H3><I>Release 1.03</I></H3></A>
+
+1.02 was broken.
+
+The Aligner had array errors due to bad coding on my part.
+
+1.03 is everything that 1.02 was, except it actually works!
+
+<A NAME="19"><BR><P><H3><I>Release 1.02</I></H3></A>
+
+A minor fix of The Aligner on some object oriented code.
+
+This had problems in prior versions because of the := on the continued
+line... (line 3)
+
+o:goBottomBlock := { || i := len( a ) }
+o:SkipBlock     := { | n, ntemp | ntemp := i, ;
+                     i := iif( x, min( i + n, len( a ) ), max( 1, i + n ) ), ;
+                     i - ntemp }
+
+---
+
+The Aligner is now able to align DBCREATE() arrays.
+
+So, this:
+
+dbcreate( 'filename.dbf', { { 'xxxxx', 'C', 23, 0 }, ;
+                            { 'yyy', 'D',  8, 0 }, ;
+                            { 'yy', 'C',  8, 0 }, ;
+                            { 'yuu', 'D',  8, 0 }, ;
+                            { 'yijiiiyy', 'N',  9, 2 }, ;
+                            { 'yhhfyy', 'D',  8, 0 } } )
+
+ends up looking like this:
+
+dbcreate( 'FILENAME.DBF', { { 'XXXXX'   , 'C', 23, 0 }, ;
+                            { 'YYY'     , 'D',  8, 0 }, ;
+                            { 'YY'      , 'C',  8, 0 }, ;
+                            { 'YUU'     , 'D',  8, 0 }, ;
+                            { 'YIJIIIYY', 'N',  9, 2 }, ;
+                            { 'YHHFYY'  , 'D',  8, 0 } } )
+
+<A NAME="20"><BR><P><H3><I>Release 1.01</I></H3></A>
+
+Click! now has a S87 mode. From CLICK.INI:
+
+// options are S87, 5.X
+// selecting S87:
+//           Stops the = to := conversion
+//           Turns off the Declaration Buster
+//           Stops the STORE to := converter
+//           The Aligner uses = != instead of := += -= *= /= ^= !=
+RUNMODE=5.X
+
+---
+
+The CLICK.LOG file is now created in the output directory, instead of
+needing to specify the entire path.
+
+---
+
+There was some problems with The Aligner which caused loss of code.
+(Gasp!) This is fixed now, plus The Aligner works even better, and
+comments are realigned after The Aligner aligns := sections. The Aligner
+aligns object oriented code much better now.
+
+---
+
+Also, I received a question concerning whether we can turn off the
+source output to make it faster to get cross reference files only. The
+answer is no, you can't turn off the output, but it wouldn't make much
+difference anyway. 95% of the time is spent parsing the input files.
+
+However, there is an opportunity to speed up Click! if you only want the
+cross reference files.
+
+Turn off the Declaration Buster (Pass 1) and The Aligner (Pass 3).
+
+Pass 2 and 4 create the function cross references and source references.
+Eliminating passes 1 and 3 will not effect the creation of the cross
+references, but will eliminate two thirds of the parsing work.
+
+In fact, after you have used Click! on your files with the Declaration
+Buster turned on, you can turn it off until the next time you need it. A
+good clue is that you never see the progress meter on pass one turn red,
+which means it found something. If the first pass is yellow all the
+time, the Declaration Buster is wasting time.
+
+<A NAME="21"><BR><P><H3><I>Release 1.00</I></H3></A>
+
+Click! scans all of your libraries available via the LIB= path
+statement, however, if you have libraries which are not included in your
+LIB= statement, you should create a temporary environment which includes
+pointers to ALL libraries.
+
+If you have already created CLICK.DBF, and it doesn't contain ALL of
+your library references, Delete CLICK.DBF and CLICK.NSX, correct your
+LIB= path to include ALL directories where you have libraries, and run
+CLICK so it can rebuild the CLICK.DBF table and index.
+
+When you pass a link script as a file list, Click! will use your current
+environment to resolve exactly which library would be used when more than
+one is found to match the function.
+
+This means that you can scan all of your libraries into CLICK.DBF one
+time, and Click! is 'current environment sensitive' at runtime.
+
+This only works when you use a .LNK file as the file list. If run Click!
+with no parameters, or *.PRG, then Click! will list every library that
+any function may have come from, in no particular order.
+
+If you pass the name of a .LNK file into Click!, it uses the library
+references inside the .LNK file(s) to resolve the function names in
+FNC_CROS.TXT when they could have come from more than one library.
+
+References to other .LNK files are also scanned for input, so if you
+have one or more references (@&#60filename&#62) to other .LNK files in the
+main .LNK file, they will be included if found. The LIB= environment
+variable will be used for the .LNK search.
+
+---
+
+There is a new file named CLICKFNC.INI which is used to augment the
+CLICK.DBF creation process. It belongs in the same directory as
+CLICK.EXE. Since functions can come from many places other than
+libraries, you need a method of permanently informing Click! as to what
+their name is and where they reside.
+
+If you have functions which do not come from libraries, and you want
+Click! to understand where they come from and include them in CLICK.DBF,
+then add the file references to CLICKFNC.INI file following the example
+of:
+
+&#60function&#62 = &#60LOCATION&#62
+
+like:
+
+swpruncmd=BLINKER.EXE
+
+Everything in CLICKFNC.INI is included any time CLICK.DBF is created.
+
+Case is not sensitive and are corrected when the .INI file is read in.
+
+Improperly formatted lines are omitted.
+
+---
+
+If you used the first word of a two word command as a function, then it
+was treated wrong, like:
+
+MENU()
+
+was coming out like:
+
+MENU ()
+
+because of the MENU TO command. This is fixed now.
+
+Also fixed are:
+
+SAVE ALL LIKE A????X TO TEMP
+
+SAVE ALL EXCEPT A* TO TEMP
+
+SET COLOR TO G*
+
+COPY TO STKSUPP$
+
+<A NAME="22"><BR><P><H3><I>.999 beta</I></H3></A>
+
+Click! can now accept .LNK files as file lists. Each line starting with
+the letters FI will be parsed and if the file(s) referred to on that
+line exist in the current directory, they are included in the processing
+list. This is handy when you keep the source for more than one
+executable in a single directory, and don't want to process them all at
+once.
+
+---
+
+In the output directory, Click! now creates two files named SRC_CROS.TXT
+and FNC_CROS.TXT.
+
+(from CLICK.INI...)
+
+SOURCE_XREF_FILE=SRC_CROS.TXT
+
+FUNCTION_XREF_FILE=FNC_CROS.TXT
+
+// options are YES, NO
+// please note that you must set ADD_CLICK_HEADER=YES
+FUNCTION_REF_INTO_SOURCE=YES
+
+// options are YES, NO
+// please note that you must set ADD_FUNCTION_HEADERS=YES
+FUNCTION_XREF_INTO_SOURCE=YES
+
+SRC_CROS.TXT contains a module to function reference for all modules
+included in the processing pass. If you set FUNCTION_REF_INTO_SOURCE to
+YES, then a final pass is made which incorporates the function
+information into the source file header.
+
+FNC_CROS.TXT contains a function called by function reference for the
+functions in all modules included in the processing pass. If you set
+FUNCTION_XREF_INTO_SOURCE to YES, then then a final pass is made which
+incorporates the function information into the source file function
+headers.
+
+This can be used as a complete function cross reference when all .PRG
+source files in a system are included in the processing pass.
+
+---
+
+In addition to the above internal function tracking ability, Click! also
+scans the LIB= environment variable, gathers a list of all available
+libraries, and extracts the function names out of every library
+available via the environment settings.
+
+The function names gathered in this process are placed into an indexed
+master function table, which is used to identify unresolved functions
+including which library they might belong to.
+
+---
+
+Files are now processed in alpha order.
+
+---
+
+Rewrite of PROFILE.PRG to be a buffered system for faster program
+startup.
+
+---
+
+If the output directory did not exist when the run was started, the
+initialization of the log file left off the starting time. Click! now
+checks for the output directory first.
+
+---
+
+In .997, I added the ability to convert STORE commands to assignments.
+
+Continued lines were messed up in the process, so Click! now skips
+conversion on lines which continue, and a message is logged to the error
+file as to the module and line number. Hand corrected code can then be
+converted safely.
+
+ie:
+
+Current File =&#62 E:\CLICK\TEST.PRG
+No Conversion of STORE due to ; at end of line 1
+
+---
+
+In .998, I made any word followed by a ( into a function, however, it
+caused control structures to fail when followed by a parenthesis. So,
+these work OK now.
+
+do while ( x := somefunc() )
+
+enddo ( oGet:ExitState == GE_NOEXIT )
+
+This more robust way of handling things is controlled by the CLICK.INI
+file [CMD_LIST] section.
+
+(from CLICK.INI...)
+
+// Commands beginning with * never make sense when used as a function, so
+// when they are followed by a (, they are NOT considered to be functions.
+// THIS ALLOWS YOU TO DEFINE WHICH COMMANDS WILL NOT BE CONSIDERED TO BE
+// FUNCTIONS. If you prefer for Click! to treat all commands as if they
+// cannot be functions, then place a * before each command.
+// Good programming practices never allow key words to be used as
+// functions.
+
+ACCEPT
+ADDITIVE
+*ALL
+*APPEND BLANK
+*APPEND FROM
+etc...
+
+---
+
+Added many more functions and commands to the CLICK.INI file
+
+<A NAME="23"><BR><P><H3><I>.998 beta</I></H3></A>
+
+Click! now has buffered line output for data writing.
+
+---
+
+Fixed the buffered line reader function to deal correctly with source
+files that are not delimited with CHR( 13 ) + CHR( 10 ). It will now
+function correctly with either of them alone, and automatically detect
+which one(s) it needs to use.
+
+Detection order is:
+
+CHR( 13 ) + CHR( 10 )
+CHR( 13 )
+CHR( 10 )
+
+Output will always use CHR( 13 ) + CHR( 10 ) as the line delimiter,
+regardless of this change in the input parsing mechanism.
+
+---
+
+Click! assumes that any word followed by a parenthesis is a function,
+and reversed the logic on detecting IF () the command.
+
+---
+
+Which fixed Click! so that it knows the difference between
+
+FUNCTION
+
+and
+
+function()  // Legal in Clipper, but bad practice in my opinion.
+            // Either way, it no longer causes an indent level.
+
+---
+
+Added FUNCTION to the [Command] list in CLICK.INI
+
+<A NAME="24"><BR><P><H3><I>.997 beta</I></H3></A>
+
+STORE statements are converted to := assignments, like:
+
+STORE 'Hello' + " World" to y, z, x
+STORE x to y
+
+becomes:
+
+y := z := x := 'Hello' + " World"
+y := x
+
+---
+
+Updated CLICKINI.DOC
+
+---
+
+Added BEGIN SEQUENCE to the command list in CLICK.INI, and modified
+Click! so it understands it as a two word command.
+
+---
+
+Using the MrDebug profiler, ( great debugger! ) I found a couple of
+places where I could speed up Click!
+
+Rewrote the List Reader and changed the binary seek routines for seeking
+into the arrays of commands, functions and operaters. Bypassed the line
+parser when the line is obviously a comment.
+
+---
+
+Well, I thought I fixed the REPLACE ALL problem, but I didn't.
+
+Once Again.... (sigh)
+
+I originally looked in the .NG, and not STD.CH.
+
+This is now according to STD.CH
+
+So:
+
+replace x with y
+replace all x with y
+replace x with y all
+replace x with y for z
+replace x with y while z
+replace x with y record n
+replace x with y next n
+replace x with y rest
+
+becomes:
+
+field-&#62x := y
+replace all x with y
+replace x with y all
+replace x with y for z
+replace x with y while z
+replace x with y record n
+replace x with y next n
+replace x with y rest
+
+Any REPLACE commands with ALL, FOR, WHILE, RECORD, REST and NEXT are not
+modified. (note 2 previous inadequate corrections in .995 and .996)
+
+<A NAME="25"><BR><P><H3><I>.996 beta</I></H3></A>
+
+Well, I thought I fixed the REPLACE ALL problem, but I didn't. Now, it
+is fixed. So:
+
+replace x with y
+replace all x with y
+replace x with y all
+replace x with y for z
+replace x with y while z
+
+becomes:
+
+field-&#62x := y
+replace all x with y
+replace x with y all
+replace x with y for z
+replace x with y while z
+
+Any REPLACE commands with ALL, FOR or WHILE are not modified.
+
+<A NAME="26"><BR><P><H3><I>.995 beta</I></H3></A>
+
+This is the first wide public beta.
+
+---
+
+Fixed the REPLACE ALL to not be changed, no matter where the ALL is on
+the line
+
+<A NAME="27"><BR><P><H3><I>.994 beta</I></H3></A>
+
+On an assignment, when the aligner was fixing the spaces before the :=,
+it would not correct the following lines if the := was followed by a ;
+
+It started like:
+
+somevar      := { 'asdfasdf', ;
+                  'asdfasdf', ;
+                  'asdfasdf' }
+
+.993 version looked like:
+
+somevar := { 'asdfasdf', ;
+                  'asdfasdf', ;
+                  'asdfasdf' }
+
+.994 version looks like:
+
+somevar := { 'asdfasdf', ;
+             'asdfasdf', ;
+             'asdfasdf' }
+
+---
+
+On a similar note:
+
+On a declaration, when the aligner was fixing the spaces before the :=,
+it would not correct the following lines if the := was followed by a ;
+
+It started like:
+
+LOCAL somevar      := { 'asdfasdf', ;
+                        'asdfasdf', ;
+                        'asdfasdf' }
+
+.993 version looked like:
+
+LOCAL somevar := { 'asdfasdf', ;
+                        'asdfasdf', ;
+                        'asdfasdf' }
+.994 version looks like:
+
+LOCAL somevar := { 'asdfasdf', ;
+                   'asdfasdf', ;
+                   'asdfasdf' }
+
+---
+
+REPLACE ALL
+
+is ignored when
+
+CHANGE_REPLACE_WITH_TO_ASSIGNMENT=YES
+
+---
+
+replace x with y
+
+now becomes
+
+field-&#62x := y
+
+instead of
+
+x := y
+
+however
+
+replace inv-&#62x with y
+
+becomes
+
+inv-&#62x := y
+
+and not
+
+field-&#62inv-&#62x := y    // which works, by the way!
+
+<A NAME="28"><BR><P><H3><I>.993 beta</I></H3></A>
+
+You can now include your own text in the header block. Just put some
+text in a file named CLICK.HDR, and it will be placed in the title block
+of each file processed.
+
+You can have a CLICK.HDR in with your CLICK.INI and CLICK.EXE, and if
+you place a CLICK.HDR in the local directory, it will override the
+master file.
+
+You don't need to comment or indent it. Plain text is all you need.
+
+---
+
+Click! had some problems ignoring comment lines. This is improved.
+
+---
+
+If the word SET is the first element of a line, and is followed by a (,
+it is now understood to be a function, not a command.
+
+---
+
+If a source file ends with the comment block still turned on, Click! now
+ends gracefully.
+
+So, you can have a source module like:
+
+function stuff
+
+xfunc( x, y )
+
+/*
+This should have a comment end block, but it doesn't
+
+---
+
+If the output file in the output directory has the same or later
+date/time than the source file, you can use:
+
+SKIP_FILES_WITH_NO_CHANGES=YES
+
+to not process them again.
+
+---
+
+The Aligner now removes the extra spaces in assignment blocks, so:
+
+nIndIf        := 0
+nIndFor       := 0
+nIndCase      := 0
+nIndFunc      := 0
+nIndBegin     := 0
+nIndWhile     := 0
+
+becomes:
+
+nIndIf    := 0
+nIndFor   := 0
+nIndCase  := 0
+nIndFunc  := 0
+nIndBegin := 0
+nIndWhile := 0
+
+---
+
+The Aligner now removes extra spaces in declarations, so:
+
+local CRLF           := chr( 13 ) + chr( 10 )
+local cContSpace     := ''
+local cFullPath      := if( file( 'CLICK.INI' ), 'CLICK', rootname( ft_origin() ) )
+
+becomes:
+
+local CRLF       := chr( 13 ) + chr( 10 )
+local cContSpace := ''
+local cFullPath  := if( file( 'CLICK.INI' ), 'CLICK', rootname( ft_origin() ) )
+
+<A NAME="29"><BR><P><H3><I>.992 beta</I></H3></A>
+
+// options are OFF, ON
+VERBOSE=ON
+
+Stops data from scrolling in the two windows when set to OFF
+
+---
+
+// options are YES, NO
+RETAIN_ORIGINAL_TIME_DATE_ON_OUTPUT_FILES=YES
+
+When set to YES, the output file(s) will have the same time and date as
+the input file.
+
+<A NAME="30"><BR><P><H3><I>.991 beta</I></H3></A>
+
+If you are using
+
+INDENT_FUNCTIONS=YES
+
+then return statements do not de-indent the code, and only the beginning
+of the next function will signify the zero indentation.
+
+FUNCTION TEST1( y )
+
+   local x := 1
+
+   if y == x
+      return .f.
+   endif
+
+   return .t.
+
+FUNCTION blork( y )
+
+   blah( y )
+
+   return blap( y )
+
+---
+
+Anything between
+
+TEXT
+ENDTEXT
+
+is passed straight through to the output.
+
+( this works identically to *+CLICKOFF and *+CLICKON )
+
+---
+
+if x=1.or.y=3.and..not.z=17
+endif
+
+correctly parses to:
+
+if x = 1 .or. y = 3 .and. .not. z = 17
+endif
+
+---
+
+The Declaration Buster was not able to ignore comments, which is fixed,
+and also did not identify commands correctly. This is fixed, but it
+costs quite a bit of time during the processing phase of the Declaration
+Buster.
+
+It was an unavoidable loss of processing speed.
+
+---
+
+I thought I had fixed the keyword being used as a variable and still
+being dealt with as if it was a structural command. I believe this is
+really fixed now, so you can do things like:
+
+do while .t.
+
+  while = 7
+  for = 8
+  do = 15
+
+  if while + for == do
+     exit
+  endif
+
+enddo
+
+Try that with any other reindenter!
+
+<A NAME="31"><BR><P><H3><I>.99 beta</I></H3></A>
+
+If you selected:
+
+CASE_OF_COMMANDS=LIKEINFILE
+
+IF and FOR didn't get indented.
+
+This is fixed.
+
+---
+
+Previously, the Declaration Buster was adding comments together when
+comments were on consecutive continued lines which were not parts of
+declarations.
+
+This is fixed.
+
+---
+
+INIT FUNCTION
+
+EXIT FUNCTION
+
+are now recognized as functions.
+
+---
+
+Previously, the macro character &, was being broken out of words in
+lines. Now, the & character is interpreted to be part of a word unless it
+is found in pairs, &&, which is interpreted as a comment.
+
+---
+
+Previously, the backslash character \, was being broken out of words in
+lines. Now, the \ character is always interpreted to be part of a word.
+
+Currently, the word characters are:
+
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890._\' and sometimes '&'
+
+---
+
+Declaration Buster now also busts up multiparameter REPLACE statements.
+
+So, if you have the Declaration Buster turned on, this:
+
+REPLACE foo with x, bar with y, baz with z
+
+becomes:
+
+REPLACE foo with x
+REPLACE bar with y
+REPLACE baz with z
+
+(which sets us up for the next change)
+
+---
+
+Continuing on with that thought, there is a new parameter in CLICK.INI,
+CHANGE_REPLACE_WITH_TO_ASSIGNMENT, which when set to YES, results in:
+
+REPLACE foo with x
+REPLACE bar with y
+REPLACE baz with z
+
+being processed into:
+
+foo := x
+bar := y
+baz := z
+
+This doesn't work unless the Declaration Buster is turned on.
+
+<A NAME="32"><BR><P><H3><I>.98 beta</I></H3></A>
+
+Instead of INDENT=3, you now have an indent level for each type of
+structure
+
+INDENT_IF=3
+INDENT_FOR=3
+INDENT_CASE=3
+INDENT_FUNC=3
+INDENT_BEGIN=3
+INDENT_WHILE=3
+
+---
+
+The Aligner on @ SAY GET's now has four options for alignment.
+
+options are 0, no alignment
+            1, each element type in it's own aligned column
+            2, Columns aligned, but not by type
+            3, Each element in it's own row.
+
+If you use option 3, there is no reverse process.
+Review the output before you commit to method 3.
+
+I suspect that option 2 will fit the best.
+
+@_SAY_GET_ALIGNMENT_METHOD=2
+
+---
+
+You can turn on and off Click! processing with:
+
+*+CLICKOFF
+
+lines between these commands will not be processed.
+
+*+CLICKON
+
+Now, if you find something in your code that Click! handles very badly,
+you can turn off Click! processing around that area, and you won't have
+to deal with Click's bad behaviour in that area of your code.
+
+<A NAME="33"><BR><P><H3><I>.97 beta</I></H3></A>
+
+There is a new CLICK.INI parameter named:
+
+POSTPROCESS_WITH_THE_ALIGNER=YES
+
+Which, when set to YES, will align @ SAY GET's (valids, etc.)
+
+---
+
+This compiles correctly in Clipper, even though it's nasty form to use a
+key word as a variable.
+
+Click! accepts this and does not count a key word which has been used as
+a variable as a part of the structural code in a program.
+
+( Even against my better judgement )
+
+if x
+
+   end := 9
+
+endif
+
+---
+
+for i=1 to 2
+     nMezo:=if(nHonap=0,;
+               if(i=1,_FFNYTART,_FFNYKOV),;                // Nyito adatok
+               if(i=1,nHonap*2+_FF1T-2,nHonap*2+_FF1K-2))  // Havi  adatok
+next
+
+There are some tab characters after the ; and before the // which were
+messing up the end of the line continue flag detection.
+
+Tabs are now converted to spaces everywhere except inside strings.
+
+---
+
+Function Main()
+
+   ? if( seconds() &#60 5000, Wibble(), Wobble() )
+   ? iif( seconds() &#60 5000, Wibble(), Wobble() )
+
+Return( NIL )
+
+Is fixed.
+
+Any IF that does not start the line is a function, and the space after
+the IF is removed.
+
+<A NAME="34"><BR><P><H3><I>.96 beta</I></H3></A>
+
+If Multimsgyn(                       ;
+                     "This is a test" ;
+                     "  "                  ;
+                     "Test Line 3")
+endif
+
+No longer blows Click! out of the water.
+
+---
+
+CLICKINI.DOC file documents the CLICK.INI file parameters.
+
+---
+
+INDENT_DO_CASE=YES
+
+is now working.
+
+---
+
+PREPROCESS_WITH_DECLARATION_BUSTER=YES
+
+is now working, and the declaration buster is improved over the one
+I have on my www site.
+
+---
+
+A lot more := will be smart aligned. Also, += -= *= /= and ^=
+
+---
+
+You can now feed Click! with a file list like the old compiler response
+files.
+
+ie, you can create a text file containing:
+
+(temp.txt)
+
+prog1.prg
+prog2.prg
+prog3.prg
+
+and pass it into Click! like:
+
+CLICK @TEMP.TXT &#60enter&#62
+
+If you pass bad file names, they are ignored with no error message.
+
+---
+
+If you have a file named CLICK.INI in the current directory, it will
+override the one stored with CLICK.EXE. This will allow you to have a
+generic CLICK.INI in the main directory and copy it to the local
+directory so that you can change certain parameters for the local
+directory only.
+
+---
+
+Two word commands were not being recognized, such as:
+
+do while
+do case
+set scoreboard
+
+This is fixed.
+
+---
+
+If you type:
+
+CLICK MYPROG &#60enter&#62
+
+Click! will assume it is a .PRG and treat it like:
+
+CLICK MYPROG.PRG &#60enter&#62
+
+<A NAME="35"><BR><P><H3><I>.95 beta</I></H3></A>
+
+I changed the characters I use to create headers and function dividers
+to *+ instead of *, since many of you use a windows editor which was
+messed up by the earlier one.
+
+When the * are encountered in your programs, those lines are removed
+unconditionally.
+
+---
+
+#defines that continue onto more than one line are kept intact
+
+---
+
+do ;
+   while
+
+do ;
+   case
+
+Both are reassembled onto one line
+
+---
+
+CLICK.INI has new parameters. Documented in CLICKINI.DOC
+
+---
+
+Function Main(); Return( NIL )
+
+Fixed remaining output when remainder is last line of program.
+
+---
+
+// Reworked inline comments. These work now.
+
+  Function Main()
+  Local n
+
+     For n := /* A number the romans didn't have */ 0 To /* The Answer */ 42
+        ? n
+     Next n
+
+  Return( NIL )
+
+  Function Main()
+  Local n
+
+     For n := 1 To 42
+        ? n
+     /* Hello, World */ Next
+
+  Return( NIL )
+
+---
+
+If you turn on function indenting, and your function does not end with a
+return, Click! starts the next function correctly and without an error
+message.
+
+---
+
+      @2,17 get LASTNAME color GETCLR WHEN activeBox(1);
+           picture"@!" valid filled(LASTNAME,"Last Name")
+
+got indented stupidly. Added SMART_ALIGN_MAX_ELEMENTS to fix this.
+
+Without limitation, it aligned like:
+
+      @  2, 17 get LASTNAME color GETCLR WHEN activeBox( 1 );
+                                                         picture"@!" valid filled(LASTNAME,"Last Name")
+
+because it tried to align to the second element after the ( which was
+the 21st element of the line. I have defaulted SMART_ALIGN_MAX_ELEMENTS
+to 11 but you might like it even lower.
+
+now it aligns like:
+
+      @  2, 17 get LASTNAME color GETCLR WHEN activeBox( 1 ) ;
+              picture "@!" valid filled( LASTNAME, "Last Name" )
+
+( DEFAULT_INDENT=8 )
+

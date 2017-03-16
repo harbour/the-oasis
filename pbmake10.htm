@@ -1,0 +1,57 @@
+<HTML>
+<HEAD><TITLE>MAKE.BAT</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>MAKE.BAT:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake10.htm#01">What if MAKE.BAT is missing?</A><BR>
+   <A HREF="pbmake10.htm#02">Why does it run from a batch file, anyway?</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>What if MAKE.BAT is missing?</I></H3></A>
+
+      If MAKE.BAT is missing, simply type PBInit and press enter. PBInit
+      will create a new one, and then you can run the make engine with
+      the new MAKE.BAT.
+
+      <B>FYI</B> You cannot directly run PBMake and have it do anything of
+      value. The reason for this is that PBMake must be run from a batch
+      file to operate correctly. 
+
+<A NAME="02"><BR><P><H3><I>Why does it run from a batch file, anyway?</I></H3></A>
+
+      PBMake runs from a batch file, because it rewrites the batch file
+      on the fly, and then executes it. Once the batch file is written,
+      PBMake is done executing, and the batch file takes over.
+
+      MAKE.BAT kicks off the process by calling PBMake in the second
+      line. PBMake then reads in your script, determines what it needs
+      to do, and rewrites MAKE.BAT.
+
+      Once you see the actual process of compiling and linking, you are
+      seeing the batch file, MAKE.BAT, in action.
+
+      You can get an education about this by typing:
+
+      MAKE MYPROG /ALL
+
+      and then viewing the contents of MAKE.BAT. You will see that
+      MAKE.BAT contains everything it takes to build your entire
+      project. Now, once everything is freshly built, run the same
+      command again, but without the /ALL command.
+
+      PBMake will see that nothing needs to be done, and will rewrite
+      MAKE.BAT to reflect this. Now, veiw MAKE.BAT again.
+
+      See the difference?
+
+      PBMake makes use of a little known trick in DOS. Batch files have
+      no idea what is in them even after they are running. DOS keeps
+      track of what the last line was that executed, and when that
+      process is finished, DOS moves to that line + 1. PBMake has
+      rewritten lines 3 - n with the new process. DOS is fooled and
+      executes the new batch lines. The result is no memory overhead.
+
+      This is the basis for many network and hard disk menuing systems.

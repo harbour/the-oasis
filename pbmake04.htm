@@ -1,0 +1,72 @@
+<HTML>
+<HEAD><TITLE>Example Template</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Example Template:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake04.htm#01">An Example Scenario...</A><BR>
+   <A HREF="pbmake04.htm#02">And the Resulting Script...</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>An Example Scenario...</I></H3></A>
+
+      This is an example PBMake script that I have created so you can see
+      how it would work with an imaginary scenario.
+
+      <B>The Imaginary Scenario ...</B>
+
+      You have a target to create named MYPROG.EXE. You are using
+      BLINKER as a linker, and the linker script for MYPROG.EXE is named
+      MYPROG.LNK. There are twenty source modules that MYPROG.EXE
+      depends on, MODULE1.PRG MODULE2.PRG, MODULE3.PRG ETC. There is an
+      include file named MYSTUFF.CH.
+
+      Source Module 1 uses the /N /W /M switches and also needs two
+      defines, FOO and BAR. Source Modules 2-5 use a different compiler
+      switch than modules 6-20, 2-5 use the /N /W /M compiler switches,
+      and 6-20 use only the /M switch. (you can have up to 99 levels of
+      different compiler switches. the example covers only three)
+
+      You wish to make a subdirectory for the objects, so they will not
+      clutter your source code directory. It will be named OBJ, and will
+      be underneath the source directory.
+
+<A NAME="02"><BR><P><H3><I>And the Resulting Script...</I></H3></A>
+
+      <B>... and the resulting PBMake script.</B>
+
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+EXEFILE=MYPROG.EXE
+
+LINKFILE=MYPROG.LNK
+
+LINKER=BLINKER
+
+INCLUDE=MYSTUFF.CH
+
+OBJDIR=OBJ\
+
+SRCDIR=
+
+FLAG1= /N /W /M /DFOO /DBAR
+
+PROG1= MODULE1
+
+FLAG2= /N /W /M
+
+PROG2= MODULE2 MODULE3 MODULE4 MODULE5
+
+FLAG3= /M
+
+PROG3= MODULE6 MODULE7 MODULE8 MODULE9 MODUL10
+PROG3= MODUL11 MODUL12 MODUL13 MODUL14 MODUL15
+PROG3= MODUL16 MODUL17 MODUL18 MODUL19 MODUL20
+
+(You can use up to PROG99)

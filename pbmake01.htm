@@ -1,0 +1,280 @@
+<HTML>
+<HEAD><TITLE>Introduction</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Introduction:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake01.htm#01">Introduction: What is a MAKE engine and script?</A><BR>
+   <A HREF="pbmake01.htm#02">How to reap the Benefits.</A><BR>
+   <A HREF="pbmake01.htm#03">What is a .CLP file</A><BR>
+   <A HREF="pbmake01.htm#04">Making the Switch to PBMake from .CLP files.</A><BR>
+   <A HREF="pbmake01.htm#05">A better way of 'Makeing' your executables!</A><BR>
+   <A HREF="pbmake01.htm#06">Assumptions.</A><BR>
+   <A HREF="pbmake01.htm#07">Incremental Linking.</A><BR>
+   <A HREF="pbmake01.htm#08">Learning more about Link Scripts.</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Introduction: What is a MAKE engine and script?</I></H3></A>
+
+      Welcome to PBMake.
+
+      PBMake is a make engine, and was created to save time.
+
+      If you are not using a make file, you are wasting time.
+
+      <B> The benefit of a make process is primarily one of saved time! </B>
+
+      A make engine and script is a program and text file that instructs
+      the Clipper compiler to only compile modules that you have
+      changed, instead of everything every time.
+
+      A make engine is the program that reads that script and performs
+      the appropriate actions.
+
+      Make engines and scripts are sometimes called a make process.
+
+<A NAME="02"><BR><P><H3><I>How to reap the Benefits.</I></H3></A>
+
+      To effectively use a make engine, you will need to break your
+      source modules in smaller units. Each function or group of
+      functions should be compiled into it's own object.
+
+      This allows Clipper to only compile in small chunks, and the
+      linker will put it all together into the target file. In the case
+      of Clipper the target file is an .EXE file.
+
+      If you have your linker set to incremental mode, the entire
+      compile and link process can be made extremely fast compared to
+      compiling all objects and performing a total link.
+
+<A NAME="03"><BR><P><H3><I>What is a .CLP file</I></H3></A>
+
+      A .CLP file is an early implementation of instructions for the
+      Clipper compiler.
+
+      If you are not using .CLP files, you can skip any parts of this
+      Norton Guide that refer to .CLP files.
+
+      .CLP files were originally created to help programmers compile all
+      of their individual source modules into a single object. Then, the
+      supplied linker was used to link the objects with the Clipper
+      libraries to create the final output.
+
+      While .CLP files do work, other ways of using your linker
+      eliminate the need for such a system, and in fact, the .CLP system
+      and single object compiler output stands in the way of saving time
+      and having more control.
+
+<A NAME="04"><BR><P><H3><I>Making the Switch to PBMake from .CLP files.</I></H3></A>
+
+      If you are using a .CLP file to create one large object, that is
+      the first thing to change.
+
+      Instead, compile each source module into it's own object by
+      listing all of the source module names without their extensions
+      into the .MAK script following the examples I provided.
+
+      Then make a reference to each of the new files in your link
+      script instead of a single entry that references the single
+      object created by your .CLP file.
+
+      For example, if you were using a file named MYPROG.CLP that reads
+      like this:
+
+      prog1
+      prog2
+      prog3
+      another
+      andmore
+      common
+      used
+      function
+
+      It would create a single object named MYPROG.OBJ.
+
+      If you change any of the source modules, you have to recompile all
+      8 of them. Usually, this is a big waste of time, because only one
+      of them is different.
+
+      If you allow PBMake to compile each source module into it's own
+      object, there will be 8 objects, and PBMake will then be free to
+      only compile the one that changed.
+
+      This is how PBMake can save you time. By breaking the compile
+      process into smaller parts. Here is an example script for PBMake
+      that would create these smaller objects for you:
+
+
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+TARGET=MYPROG.EXE
+
+LINKFILE=MYPROG.LNK
+
+LINKER=BLINKER
+
+PROG1= PROG1   PROG2  PROG3 ANOTHER
+PROG1= ANDMORE COMMON USED  FUNCTION
+
+
+      The more complex your source code gets, the more time you save!
+
+      Now you are faced with a new problem. You need a way to assemble
+      all those parts.
+
+      With a .CLP file, you probably have been using something like:
+
+      CLIPPER @MYPROG.CLP
+
+      plink86 file MYPROG
+
+      Now that you have broken up the objects, one way to link them
+      would be:
+
+      rtlink file prog1,prog2,prog3,another,andmore,common,used,function
+
+      (or whatever linker you are using)
+
+      As you can see, that is going to get old in a hurry, and will
+      break the byte limit of the dos command line if it gets much
+      longer.
+
+      Fortunately, the linker manufacturers give us a better way.
+
+      As you have seen above, eliminating the .CLP file breaks the large
+      object into many smaller ones, but you still need to put them
+      together into an target/.EXE.
+
+      So, instead of a list of files that Clipper will compile into a
+      single large object, we will make a list of files the linker will
+      link together into an target/.EXE.
+
+      This called a linker script, and usually ends in the letters .LNK
+
+      A linker script for the example above (named MYPROG.LNK) would
+      look like:
+
+      OUTPUT MYPROG.EXE
+      FILE PROG1
+      FILE PROG2
+      FILE PROG3
+      FILE ANOTHER
+      FILE ANDMORE
+      FILE COMMON
+      FILE USED
+      FILE FUNCTION
+
+      If you created a file with the above contents you would tell the
+      linker to use it like:
+
+      rtlink @MYPROG.LNK
+
+      (or whatever linker you are using)
+
+      PBMake actually writes and executes a batch file that performs all
+      of these steps automatically. All you have to do is set up the
+      make script correctly, which is a simple process.
+
+      PBMake performs an incremental compile, and saves you time by
+      doing as little as possible but all that is necessary to compile a
+      fully up to date executable.
+
+<A NAME="05"><BR><P><H3><I>A better way of 'Makeing' your executables!</I></H3></A>
+
+      Most MAKE engines require you to learn complex or difficult
+      procedures to create a make script, and then when you reach a
+      certain point of complexity, the MAKE engine reaches it's limits,
+      leaving you with no easy solutions.
+
+      It's a shame that breaking your applications into smaller and
+      smaller pieces is what makes make engines more efficient, and is
+      the very thing that breaks them when your script gets too complex.
+
+      You will not have this problem with PBMake.
+
+      PBMake is not only easy to learn how to use, but using it will
+      reward you with saved time, easy to understand make scripts and
+      the knowledge that the job was done right and you understand why.
+
+<A NAME="06"><BR><P><H3><I>Assumptions.</I></H3></A>
+
+      A few assumptions are made in PBMake, primarily in the name of
+      simplification and ease of use for Clipper programmers.
+
+      These assumptions are:
+
+      COMPILER=CLIPPER
+      SRCEXT=.PRG
+      OBJEXT=.OBJ
+      LINKER_SEP=@
+
+      If you use another language, all of these can be changed. They are
+      simply initial values that Clipper programmers need not supply for
+      the make engine to work correctly.
+
+      <B>PBMake enforces the following dependencies automatically:</B>
+
+      1. You will be creating an output file. (typically an .EXE)
+         We will be referring to it as the target.
+
+      2. You are using a script for your linker which contains all of
+         the linker directives. <B>(this is important)</B>
+
+      3. The output file will need to be relinked whenever any object
+         file it depends on has a newer time/date stamp, or the link
+         script has been modified.
+
+      4. Each object depends on only one source module, and will be
+         named the same as the root name of the source module.
+         ( AAXYZ.PRG will create AAXYZ.OBJ, XX.C will create XX.OBJ )
+
+      5. Each object file will need to be rebuilt whenever the source
+         module it depends on has a newer time/date stamp, or is older
+         than anything in the INCLUDE= directive, or you used the /ALL
+         flag.
+
+<A NAME="07"><BR><P><H3><I>Incremental Linking.</I></H3></A>
+
+      Even though this has nothing to do with PBMake, it does go hand in
+      hand. You can save even more time with a modern linker like
+      BLINKER, by using incremental linking during your development
+      cycle.
+
+      (For that matter, you can save a lot of time just by switching to
+      BLINKER and not optimizing anything else, but that's another
+      conversation...)
+
+      Incremental linking works just like incremental compiling does. It
+      only replaces the object that changed in the target/.EXE. It
+      doesn't have to recreate the entire .EXE every time the linker
+      runs.
+
+      By using PBMake and a linker that can perform incremental links,
+      you can accelerate your development process by huge amounts, by
+      not waiting for processes that really don't need to be done.
+
+      As a final note, please be aware of this; if you use incremental
+      linking, you need to turn it off and relink one more time before
+      placing the target/.EXE into production. Incremental linking,
+      while providing an accellerated development cycle, adds size to
+      the .EXE, which can be removed just before you create the final
+      product.
+
+<A NAME="08"><BR><P><H3><I>Learning more about Link Scripts.</I></H3></A>
+
+      If need to know more about link scripts, please read your linker
+      documentation.
+
+      Learning to use link scripts will give you MUCH more control over
+      how your linker puts your source code and libraries together to
+      form the final product.
+
+      It is worth the effort to learn how to use linker scripts.
+
+

@@ -1,0 +1,46 @@
+<HTML>
+<HEAD><TITLE>Getting Started</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Getting Started:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake02.htm#01">Put it in your Path.</A><BR>
+   <A HREF="pbmake02.htm#02">Building your first Blank Template.</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Put it in your Path.</I></H3></A>
+
+      First, you must place PBMAKE.EXE, PBINIT.EXE and PBERRLIN.EXE in a
+      directory in your path. Your \CLIPPER5\BIN directory would be
+      fine.
+
+<A NAME="02"><BR><P><H3><I>Building your first Blank Template.</I></H3></A>
+
+      Go to a directory where you wish to institute a make process.
+
+      At the DOS prompt, type:
+
+      PBINIT &#60makefilename&#62
+
+      where &#60makefilename&#62 is the intended name of the make script.
+
+      It makes sense to name it the same as the target/.EXE file it will
+      create, so it's easy to remember. If you use an extension on
+      &#60makefilename&#62, it will be removed, and changed to .MAK
+
+      <B> PBINIT will never overwrite an existing template. </B>
+
+      The first time you ran PBINIT &#60makefilename&#62 it also creates a
+      file named MAKE.BAT and a file named MK.BAT.
+
+      Running PBInit will allow you to create both a .MAK file and a
+      .LNK file if you don't already have one. Just select the
+      appropriate buttons, and PBInit will build full fledged link and
+      make scripts for you. You can customize the link scripts by
+      modifying the PBINIT.INI file.
+
+      See the REFERENCE section of this Norton Guide, and select
+      Initializer Tool section to get a comprehensive documentation of
+      how the new 2.0x version has improved this ability.

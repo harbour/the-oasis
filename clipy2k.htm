@@ -1,0 +1,346 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<HTML>
+  <HEAD>
+    <TITLE>The Oasis Clipper Source. Over 300,000,000,000 bytes served!</TITLE>
+    <META NAME="description" CONTENT="The Oasis is a Clipper Programmers Source Code Archive">
+<META NAME="keywords" CONTENT="Clipper,CA-Clipper,Compiler,Nantucket,Alaska,Xbase,Xbase++,FOX,dBase,source code,source,code,library,libraries,demo,patch,patches,upgrade,utility,utilities,Blinker,FiveWin,Clip4Win,gsr,pbmake,click!,Harbour,Phil Barnett">
+<META http-equiv="pics-label" content='(pics-1.1 "http://www.icra.org/ratingsv02.html" l gen true for "http://www.the-oasis.net" r (cz 1 lz 1 nz 1 oz 1 vz 1) "http://www.rsac.org/ratingsv01.html" l gen true for "http://www.the-oasis.net" r (n 0 s 0 v 0 l 0))' >
+<META http-equiv="PICS-Label" content='(PICS-1.1 "http://www.classify.org/safesurf/" l r (SS~~000 1))' >
+<META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<META NAME="MSsmarttagsPreventParsing" CONTENT="TRUE" />
+<META HTTP-EQUIV="imagetoolbar" CONTENT="NO" />
+    <STYLE TYPE="text/css">
+<!-- A:hover {text-decoration:bold; color:red;} A:link {text-decoration:underline; color:#0000AA;} -->
+P, LI, H1, H2, H3, H4, H5, H6, TABLE { font-family: helvetica, arial, sans-serif }
+</STYLE>
+  </HEAD>
+  <!-- Contains <BODY> tag --><body TEXT="#000000" BGCOLOR="#FFFFE0" LINK="#AA0000" VLINK="#990099"  ALINK="#0000AA" >
+
+<SCRIPT language="JavaScript" TYPE="TEXT/JAVASCRIPT">
+<!--
+  if ( parent.frames && parent.frames.length > 0 )
+       parent.location.href = self.location.href;
+ //-->
+</SCRIPT>
+  <TABLE width="100%" cellpadding="0" cellspacing="12">
+    <TBODY>
+      <TR>
+        <TD valign="top" align="left">
+          <!-- BODY BEGIN -->
+          <CENTER><IMG SRC="the-oasis.gif" HEIGHT=125 WIDTH=468 ALT="The Oasis Logo"></CENTER>
+          <P>
+          <CENTER><H2>Year 2000 and xBase Languages</H2></CENTER>
+
+<P><CENTER><IMG SRC="shipl.gif" alt=""></CENTER>
+
+<P><CENTER><H2>The .DBF date storage problem.</H2></CENTER>
+
+<P> There is no Y2K date storage problem if you have selected a date type
+  field for date storage. Date type fields store dates in DTOS() format,
+  using 8 characters as YYYYMMDD. Four digit years have been stored correctly
+  in .DBF files since dBase III.
+
+<P> Of course, if you have stored dates in either character or numeric
+  fields, you may have a big problem. You will probably have to modify your
+  code to work correctly after 01/01/2000.
+
+<P><A HREF="files/utils/dbfy2k17.zip"> DBFY2K17.ZIP
+  (268K)</A> is a tool for examining .DBF files for date usage. This highly
+  configurable tool will make it simple to find date usage in existing .DBF
+  tables, including numeric and character based storage.
+
+<P> DBF_Y2K.EXE is freeware, written in CA-Clipper 5.2e, and is provided
+  with complete source code.
+
+<P> This utility quickly scans all .DBF files in a directory which match
+  the filespec. DBF_Y2K creates a summary of date field year minimum and
+  maximum, character date fields, numeric date fields, empty files and unused
+  fields.
+
+<P><CENTER><H2>There are serious Clipper Tools III date problems!</H2></CENTER>
+
+<P><I> Note from Phil: Computer Associates has released a patched version
+  of Clipper Tools III that fixes these and the R6003 problems encountered in
+  using Clipper Tools III. I strongly suggest you pick up their patch and use
+  it. It appears to work correctly in my testing.</I>
+
+<P> <A HREF="ftp://ftp.ca.com/pub/clipper/tools3.zip">Clipper Tools III
+  Update</A>
+
+<P> If you use any of the Clipper Tools III date function; DOY(),
+  ADDMONTH(), BoY(), EoY(), BoM(), EoM(), BoQ(), EoQ(), LastDayOM() or
+  Quarter() (and I suspect any date function in CTIII now), you will need to
+  examine how you use the function(s). According to the documentation, if you
+  don't specifically pass a date as a parameter the current date is used by
+  default. This doesn't work after December 31, 1999. The fix is simple.
+  Replace all instances of DOY() with DOY(DATE()) (or or any of the above
+  functions), and the problem disappears.
+
+<P> If you already are passing a date into any of these functions, no
+  changes are required.
+
+<P> Use <A HREF="files/utils/gsr184g.zip">GSR</A>
+  as the search and replace engine to simplify the fix.
+
+<P><CENTER><H2>The .DBF header problem.</H2></CENTER>
+
+<P><I>There is a very nice synopsis of this on Greg Holmes<A HREF="http://www.ghservices.com/gregh/clipper/trix0011.htm">
+  Data File Headers and the Year 2000</A> page.</I>
+
+<P>Also, please see the link below for a way to patch Clipper.LIB to
+  eliminate the Y2k problem in LUPDATE() in your Clipper software.
+
+<P> The xBase "last updated" date stored in the .DBF header has a problem
+  in some languages and implementations. The header of the .DBF file stores
+  the last update in bytes 1, 2 and 3 in hex.
+
+<P><BLOCKQUOTE> 0  filetype checkbyte<BR>
+  1   year( date() ) - 1900<BR>
+  2 month( date() )<BR>
+  3    day( date() )<BR>
+
+<P></BLOCKQUOTE> The problem is that some software which reads and writes
+  to .DBF files handles the year byte differently. There appears to be two
+  types of different handling.
+
+<P> 1. The software continues to increment the year byte beyond 1999. 2.
+  The software does not continue to increment, but wraps to 00 instead.
+
+<P> ...and there appears to be three different types of usability.
+
+<P><BLOCKQUOTE> 1. The software handles it (doesn't die)<BR>
+  2. The software doesn't handle it ok, but won't kill itself.<BR>
+
+  3.  The software doesn't handle it ok, and kills itself.<BR>
+
+<P></BLOCKQUOTE> The two programs known to have problems are:
+
+<P><BLOCKQUOTE> dBase III+<BR>
+  Dbxl 1.3   ( note that Arago, which is the newer Dbxl is compliant)<BR>
+
+<P></BLOCKQUOTE> dBase III+, by itself, wraps back to 00, and continues on.
+  The problem comes when the year byte is incremented by some other software
+  to be a value of greater than 99. dBase III+, in this case, says it's not a
+  valid file and refuses to open the file.
+
+<P> Dbxl is really broken. It is able to increment and save the year byte
+  beyond 99, but is then unable to open the file. Any file it updates becomes
+  unopenable by itself after Jan 1, 2000.
+
+<P><CENTER><H2>How to fix the Problem?</H2></CENTER>
+
+<P><B>DBXL</B> Here is some very interesting information about Dbxl. This
+  is a patch to the Dbxl executable that modifies Dbxl to work until 2027! Of
+  course, if you modify Dbxl, you do so at your own risk, but if it's totally
+  broken now, there's not much risk. You can access this information here. http://www.code-co.com/dbxl/dbxlfix.htm (this link appears to be gone forever)
+
+<P><B>Others</B> You can manually patch the database file using Norton Disk
+  Editor (DE) or some similar program.  A freeware program called Y2KDBFIX is
+  available via anonymous FTP from Cinderella at:
+
+<P><BLOCKQUOTE> ftp://ftp.cinderella.co.za/pub   (South African Site)<BR>
+
+  or  ftp://parsifal.membrane.com/pub (USA Mirror Site)<BR>
+
+  (Note from Phil: These sites appear to be gone forever. A search on
+  google.com revealed it in Hungary. I'd suggest getting it right away. Who
+  knows if it will stay around.)<BR>
+
+  http://www.stadium.hu/szt/cl2000/<BR>
+
+  http://www.stadium.hu/szt/cl2000/y2kdbfix.zip<BR>
+
+<P></BLOCKQUOTE> Here is a list of what we have discovered so far:
+
+<P> These programs rollover the year byte based on the most recent century
+  (both the year 1900 and the year 2000 are represented as 00 hex):
+
+<P><BLOCKQUOTE> Clipper<BR>
+  dBaseIII+<BR>
+  Fox 2.6<BR>
+
+<P></BLOCKQUOTE> These continue to increment the year byte beyond 1999 (the
+  year 2000 is represented as 64 hex, which converts to 100 decimal):
+
+<P><BLOCKQUOTE> Xbase++<BR>
+  Visual dBase 5.5<BR>
+  dBXL 1.3<BR>
+  dBase IV 2.0<BR>
+  Quicksilver<BR>
+  dBase IV 1.5<BR>
+  CA-dBFast 2.0D-2<BR>
+  Arago (Dbxl) Lan 2.5<BR>
+  Microsoft Excel from Office 97<BR>
+  Microsoft Access 2.0<BR>
+
+<P></BLOCKQUOTE> These can interpret the header year correctly with EPOCH
+  or Set Century:
+
+<P><BLOCKQUOTE> Clipper<BR>
+  Xbase++<BR>
+  Visual dBase 5.5<BR>
+  dBase IV 2.0<BR>
+  Fox 2.6<BR>
+  dBase IV 1.5<BR>
+  Arago (Dbxl) Lan     2.5<BR>
+
+<P></BLOCKQUOTE> These cannot interpret a 2000+ header year and refuse to
+  open the table.
+
+<P><BLOCKQUOTE> dBaseIII+<BR>
+  dBXL 1.3<BR>
+
+<P></BLOCKQUOTE> These cannot interpret the incremented byte, but can still
+  use the file;<BLOCKQUOTE>
+
+<P> CA-dBFast 2.0D-2<BR>
+  </BLOCKQUOTE>
+
+<P> According to consensus, dBXL is the only program that truly is broken
+  in Y2K.
+
+<P> It increments the header year byte, but then cannot use its own file!
+
+<P> dB3+ and dBFast, while not properly handling the Y2K change, at least
+  can continue to use their own files if no other system increments the
+  header byte beyond 2000.
+
+<P> Misc:
+
+<P> Microsoft Excel
+
+<P> Excel can save files in multiple different .DBF formats. The DBF4
+  format is the default.
+
+<P> Here are the results from each format.
+
+<P><BLOCKQUOTE> When saved in DBF2 format: 02 10 00 02 02 66 1C 02  (66 is
+  2002)<BR>
+  When saved in DBF3 format: 03 66 02 02 10 00 00 00  (66 is 2002)<BR>
+
+  When saved in DBF4 format: 03 66 02 02 10 00 00 00  (66 is 2002)<BR>
+
+<P></BLOCKQUOTE><CENTER><IMG SRC="shipr.gif" alt=""></CENTER>
+
+<P> For a long time, I had some code here to kind of replace LUPDATE().
+  Since Tom Leylan has created his LUPDATE() patch, the ugly and barely
+  usable code I had here was renedered useless. See the link just below for a
+  real solution.
+
+<P><CENTER><IMG SRC="shipl.gif" alt=""></CENTER>
+
+<P><CENTER><H2>Some Links about database & Year 2000</H2></CENTER>
+
+<P><A HREF="http://www.leylan.com/app.asp?pg=lupdate"> A Clipper Y2K
+  LUPDATE Patch</A>
+
+  <!--
+
+<P><A HREF="http://www.computerpro.com/~phystad/csy2kfaq.html"> Unofficial
+  Comp.Software.Year-2000 FAQ</A> -->
+
+<P><A HREF="http://www.sysmod.com/y2kxbase.htm">Year 2000 issues in PC
+  Database packages</A>
+
+<P><A HREF="http://www.ghservices.com/gregh/clipper/trix0009.htm">Greg
+  Holmes Year 2000 page</A>
+
+  <!--
+
+<P><A HREF="http://www.myna.com/~duinen/y2kcustm.html">Y2K for Developers
+  of Custom Software</A> -->
+
+<P><A HREF="http://members.aol.com/adechert/y2kscan.htm">dBASE for DOS Y2K
+  Site</A>
+
+<P><CENTER><IMG SRC="shipr.gif" alt=""></CENTER>
+          <P><CENTER>
+
+<P><A HREF="http://www.multiedit.com/"><IMG SRC="builtwithme.gif" WIDTH=90 HEIGHT=30 BORDER=0 VSPACE=0 HSPACE=0 ALT="Built with MultiEdit">
+  </A>
+
+  <A HREF="http://www.fiberhosting.com/webpagehosting/webpagehosting.htm" TARGET="NEW">
+  <IMG SRC="fiberhostingLINK.gif" BORDER="0" ALT="Fiberhosting.COM">
+  </A>
+
+  <A HREF="http://www.matrixlist.com/"><IMG SRC="matrixlist.gif" WIDTH=83 HEIGHT=29 BORDER=0 ALT="Matrix List">
+  </A>
+
+  <A HREF="http://wwp.mirabilis.com/5092742"><IMG SRC="msg.gif" BORDER=2 HEIGHT=21 WIDTH=80 ALT="Mirabilis ICQ">
+  </A>
+
+  <A HREF="http://www.icra.org/labelv02.html"><IMG SRC="us_ag_88x31.gif" BORDER=0 HEIGHT=31 WIDTH=88 Alt="ICRA">
+  </A><A HREF="http://www.safesurf.com/"><IMG SRC="ssurf.gif" BORDER=0 HEIGHT=34 WIDTH=108 ALT="Safe Surf">
+  </A>
+
+<P><A HREF="terms.htm">Terms and Conditions of Use of The Oasis Web Site</A>
+
+<P>Last Oasis Maintenance: July 24, 2004
+
+<P>Copyright (C) 1996-2004 Phil Barnett. All Rights Reserved Worldwide.
+
+  </CENTER>
+          <!-- BODY END -->
+        </TD>
+        <TD valign="top" align="center" width="160">
+          <!-- MENU BEGIN -->
+          <TABLE width="160" cellpadding="2" cellspacing="2" border="0">
+  <TBODY>
+  <TR>
+    <TD align="center">
+      <P>
+        <IMG SRC="oasism.gif" HEIGHT="183" WIDTH="112" ALT="Oasis Camels">
+      <P>
+    </TD>
+  </TR>
+  <TR>
+    <TD bgcolor="#000000">
+      <TABLE bgcolor="#91C8FF" width="100%" border="0" cellspacing="0" cellpadding="0">
+        <TR>
+          <TD align="center">
+            <B>Menu</B>
+          </TD>
+        </TR>
+      </TABLE>
+    </TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="firstime.htm">First time here?</A>
+    </TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="search.htm">Site Search</A></TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="ftp_main.htm">Source Code Archive</A></TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="coolsite.htm">Cool Clipper Sites</A></TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="clipy2k.htm">Year 2000 and xBase</A></TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="http://www.davep.org/clipper/FAQ/">Clipper FAQ 2.31</A></TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="mini_faq.html">Clipper Mini-Faq 3.02</A></TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="https://harbour.github.io/">The Harbour Project</A></TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="feedback.htm">Mail to Phil</A></TD>
+  </TR>
+  <TR>
+    <TD align=center><A HREF="index.html">Home Page</A></TD>
+  </TR>
+  </TBODY>
+</TABLE>
+          <!-- MENU END -->
+        </TD>
+      </TR>
+    </TBODY>
+  </TABLE>
+  </BODY>
+</HTML>

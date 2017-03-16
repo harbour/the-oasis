@@ -1,0 +1,340 @@
+<HTML>
+<HEAD><TITLE>Supported Languages</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Supported Languages:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake07.htm#01">Using PBMake for compilers other than Clipper.</A><BR>
+   <A HREF="pbmake07.htm#02">For Xbase++ compiler.</A><BR>
+   <A HREF="pbmake07.htm#03">For C compiler.</A><BR>
+   <A HREF="pbmake07.htm#04">For Assembler.</A><BR>
+   <A HREF="pbmake07.htm#05">My compiler doesn't create files with the .OBJ extension.</A><BR>
+   <A HREF="pbmake07.htm#06">******************************* Examples ***********************************</A><BR>
+   <A HREF="pbmake07.htm#07">A make script that made this Norton Guide!</A><BR>
+   <A HREF="pbmake07.htm#08">A make script for a large Clipper executable.</A><BR>
+   <A HREF="pbmake07.htm#09">The make file for PBMake</A><BR>
+   <A HREF="pbmake07.htm#10">Using Clipper, C and LIB.EXE to create a library</A><BR>
+   <A HREF="pbmake07.htm#11">The lib script used with LIB.EXE in the above example (PRBFUNC5.RSP)</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Using PBMake for compilers other than Clipper.</I></H3></A>
+
+      PBMake includes an option to override the default compiler, the
+      source extension and the object extension, if the defaults are not
+      correct for the compiler you need a make engine for.
+
+      If you do not use these three added directives, they default to:
+
+      COMPILER=CLIPPER
+      SRCEXT=.PRG
+      OBJEXT=.OBJ
+
+      You may also override the COMPILER=, SRCEXT=, OBJEXT=, OBJDIR= and
+      SRCDIR= which are active across all sections with individual
+      directives for each section.
+
+      So, you can do this:
+
+      FLAG= /N /M /A /V /W /ES2
+      INCLUDE= MASTER.CH COMM.CH
+      SRCEXT=.PRG   (this is a default, anyway)
+      OBJEXT=.OBJ   (this one too)
+
+      PROG1= HELP MAIN MENU
+
+      FLAG2= /M
+      PROG2= OLDSTUFF
+
+      FLAG4=
+      COMPILER4=MASM
+      SRCEXT4=.ASM
+
+      INCLUDE5= myheader.h
+      FLAG5=
+      COMPILER5=CL /c /AL /Zl /W2 /FPa /Gs
+      SRCEXT5=.C
+
+      FLAG6= -E -= -MC -^^2
+      COMPILER6=FOOBAR
+      SRCEXT6=.FOO
+      OBJEXT6=.BAR
+      OBJDIR6= OUTPUT%\DATA\FOO\BAR
+
+      <B>Note:</B> When you specify an OBJDIR, and the compiler is not
+      CLIPPER for that area, the output directory will not be verified.
+      This is done so that you may use whatever compiler directive that
+      is necessary to cause the output to be placed in some other
+      directory, without regard for making the OBJDIR??= directive look
+      like a findable directory to DOS.
+
+      For example, in the example above, there is no way to validate
+      OUTPUT%\DATA\FOO\BAR with a DOS path validation.
+
+<A NAME="02"><BR><P><H3><I>For Xbase++ compiler.</I></H3></A>
+
+      For the <B>Xbase++</B> compiler, you would add the directives:
+
+      COMPILER=XPP
+
+<A NAME="03"><BR><P><H3><I>For C compiler.</I></H3></A>
+
+      For the <B>C</B> compiler, you would add the directives:
+
+      SRCEXT=.C
+      COMPILER=CL
+
+<A NAME="04"><BR><P><H3><I>For Assembler.</I></H3></A>
+
+      For <B>Assembler</B>, you would add the directives:
+
+      SRCEXT=.ASM
+      COMPILER=MASM (or TASM, etc.)
+
+<A NAME="05"><BR><P><H3><I>My compiler doesn't create files with the .OBJ extension.</I></H3></A>
+
+      If your compiler does not produce files with an .OBJ extension,
+      you can change the object extension with the directive:
+
+      OBJEXT=.??? (replace ??? with the appropriate extension)
+
+      You can use a different object extension for each section, like:
+
+      SRCEXT=.PRG
+      OBJEXT=.OBJ
+
+      SRCEXT3=.C
+      OBJEXT3=.OBJ
+
+      SRCEXT4=.FOO
+      OBJEXT4=.BAR
+
+<A NAME="06"><BR><P><H3><I>******************************* Examples ***********************************</I></H3></A>
+<A NAME="07"><BR><P><H3><I>A make script that made this Norton Guide!</I></H3></A>
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+TARGET=PBMAKE.NG
+
+LINKER=NGML
+LINKER_SEP=
+LINKFILE=PBMAKE.LNK
+
+COMPILER1=NGC
+
+SRCEXT1=.DOC
+OBJEXT1=.NGO
+
+PROG1=INTRO   FEATURES STARTUP  BLANKTMP EXAMPLE  PROBLEMS
+PROG1=RUNNING MAKEBAT  LANGUAGE SUPPORT  COPYRITE REGISTER CHANGES
+
+SUCCESS=CALL MOVEM.BAT
+NONEED=ECHO No files to move
+
+<A NAME="08"><BR><P><H3><I>A make script for a large Clipper executable.</I></H3></A>
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+TARGET=INORDER.EXE
+
+LINKER=BLINKER
+
+LINKFILE=POS.LNK
+
+INCLUDE=PRINTER.CH PUBLICS.CH FLD_MAST.CH
+
+OBJDIR=OBJ\
+
+FLAG1= /W /M /N /Q /ES2
+
+PROG1=HELP     DBF_OPEN PRINTER  WHERPRNT P_PAYMNT J_BILL   POST_850 EDITSALE
+PROG1=ERROR52  INVCOST  GOODNTX  ADDQUEUE VENEDIT  VENADD   PO       PACK
+PROG1=EDTQUEUE FBROWSE  DEPTADD  PDOTADD  ORDRFILL CLEAREM  TMPREAD  TMPMAKE
+PROG1=TEADD    UOSADD   CODEADD  SAYINGS  TMPKILL  CLEARORD ORDRPOST TEST_DBV
+PROG1=ALTSALE  ALTRECV  PAYADD   PICKSORT ORD_BUSI ORD_810  INV_SPOT INDXMAIN
+PROG1=PROGRESS P_GETID  BARPROCS TABLES   COM_OUT  INV_XREF GETBALAN STATEMNT
+PROG1=EMPLDATA GETFLDS  PRB_PASS INORDER  POP_AT   TAXTABLE WHOLCOST YTDCLEAR
+PROG1=INVDEL   SETARCH  SETSUMM  RECEIVE  YTDPRNT  EDI_PO   AVER3X10 CONT8X11
+PROG1=PRB_CALC FIXINV   PRB_DATE GETSYS52 RECMENU  RUNANEXE DISKPRNT UNSERIAL
+PROG1=INDXHIST LIST_ANY ORDERENT INDXDEFI PICKLIST ORDR_ADJ ORD_MOVE ORDDEFLT
+PROG1=TITLEBOX GETTAX   TAXFIG   TRANSFER ACCT_PAY ORDSTAT  ORDUNFIL
+
+FLAG2= /M /Q /ES2
+
+PROG2=WELCOME  USER     OPENDRAW UTILITY  PAYINV   INDXWIND INDXBUS  DNRRPT
+PROG2=POSTSALE INVMAIN  INVLIST  SUMM     INDXDEL  INDXEDIT INDXREPL ACCBAL
+PROG2=QUICK    PARTPROF INDXADD  INDXPRNT PRNTFORM MAILMERG IS_VEND  PAIDOUTS
+PROG2=DATECHG  VENMAIN  VENDIR   VENPAY   MERGE    NEWXPND  WIDEPRNT INDXPROP
+PROG2=P_OPEN   INDXPDOT P_SALES  BILLING  RETURNS  TICKSET  CHANACCT TAXREFIG
+PROG2=P_DOMORE P_RECEPT ARCHIVE  CNSGNRPT TAXKILL  CODECHAN BALANCE  TRANSACT
+PROG2=P_POST   INVWIND  BUILDPRT RECREPT  MERGBASE MERGEDIT MERGPRNT OMCCROSS
+PROG2=VENWIND  INVADD   PARTHIST PAYABLE  PRN_OUT  CHKWRITE HISTRNDX YTDMENU
+PROG2=INVLEVEL INDXVEN  TOTFORM  MODSETUP SAY_POP  XFEREDIT XFERMAIN XFERMOVE
+PROG2=SUMMARY  REPRINT  VENDEL   VENPRNT  POP_PICK GET_SALE SKU_LIST SKU_FILL
+PROG2=YAMCROSS RJE
+
+<A NAME="09"><BR><P><H3><I>The make file for PBMake</I></H3></A>
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+LINKER=BLINKER
+
+PROG1=PBMAKE BUFFREAD
+
+#IFDEF DEMO
+
+   TARGET=DEMO\PBMAKE.EXE
+
+   LINKFILE=DEMO.LNK
+   OBJDIR=DEMO\OBJ\
+   FLAG1= /M /N /W /Q /ES2 /DDEMO
+
+   SUCCESS=PKLITE DEMO\PBMAKE -E -A
+
+#ELSE
+
+   TARGET=REG\PBMAKE.EXE
+
+   LINKFILE=REG.LNK
+   OBJDIR=REG\OBJ\
+   FLAG1= /M /N /W /Q /ES2
+
+   SUCCESS=PKLITE REG\PBMAKE -E -A
+
+#ENDIF
+
+NONEED=ECHO PKLite not Necessary
+
+<A NAME="10"><BR><P><H3><I>Using Clipper, C and LIB.EXE to create a library</I></H3></A>
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+TARGET=PRBFUNC5.LIB
+
+LINKFILE=PRBFUNC5.RSP
+
+LINKER=LIB PRBFUNC5
+
+PRELINKCMD=DEL PRBFUNC5.LIB
+
+FLAG1= /M /N /A /V /W /ES2
+
+INCLUDE=PRBFUNC5.CH
+
+PROG1=PRB_FLDS PRB_ABRT PRB_ALIN PRB_ALKY PRB_ALL  PRB_AMPM PRB_APND PRB_ASK
+PROG1=PRB_ATTN PRB_BACK PRB_BLET PRB_BLNK PRB_BNUM PRB_CALC PRB_CLOK PRB_CLS
+PROG1=PRB_COPR PRB_COPY PRB_D2C  PRB_D2DT PRB_DATE PRB_DBF  PRB_DOTY PRB_DRBX
+PROG1=PRB_EJCT PRB_FEEL PRB_FLAT PRB_FLSH PRB_FPIK PRB_FULL PRB_GATH PRB_GETF
+PROG1=PRB_HOTP PRB_INT  PRB_ISDP PRB_KEYS PRB_KILL PRB_LOCK PRB_MEMB PRB_MEN2
+PROG1=PRB_MMDD PRB_MONY PRB_MSG  PRB_MVER PRB_PACK PRB_PASS PRB_PICK PRB_POP
+PROG1=PRB_PPOP PRB_PRNT PRB_PROG PRB_PROP PRB_PROT PRB_QERY PRB_QNTX PRB_RAND
+PROG1=PRB_RCOL PRB_REPL PRB_RJZF PRB_ROOT PRB_S2A  PRB_SCAT PRB_SCOL PRB_SETS
+PROG1=PRB_SHOW PRB_SKEY PRB_SLEJ PRB_STAK PRB_STIF PRB_STOP PRB_STRM PRB_TBOX
+PROG1=PRB_TEMP PRB_TRAN PRB_VERI PRB_WSLK
+
+
+FLAG2= 
+INCLUDE2=
+SRCEXT2=.C
+COMPILER2=F:\C51\BIN\CL /c /AL /Zl /W2 /FPa /Gs
+
+PROG2=CHECKEXE CRCOUNT PRB_JUL SHADE_IT TOUCH
+
+<A NAME="11"><BR><P><H3><I>The lib script used with LIB.EXE in the above example (PRBFUNC5.RSP)</I></H3></A>
++PRB_ABRT &
++PRB_ALIN &
++PRB_ALKY &
++PRB_ALL  &
++PRB_AMPM &
++PRB_APND &
++PRB_ASK  &
++PRB_ATTN &
++PRB_BACK &
++PRB_BLET &
++PRB_BLNK &
++PRB_BNUM &
++PRB_CALC &
++PRB_CLOK &
++PRB_CLS  &
++PRB_COPR &
++PRB_COPY &
++PRB_D2C  &
++PRB_D2DT &
++PRB_DATE &
++PRB_DBF  &
++PRB_DOTY &
++PRB_DRBX &
++PRB_EJCT &
++PRB_FEEL &
++PRB_FLAT &
++PRB_FLDS &
++PRB_FLSH &
++PRB_FPIK &
++PRB_FULL &
++PRB_GATH &
++PRB_GETF &
++PRB_HOTP &
++PRB_INT  &
++PRB_ISDP &
++PRB_KEYS &
++PRB_KILL &
++PRB_LOCK &
++PRB_MEMB &
++PRB_MEN2 &
++PRB_MMDD &
++PRB_MONY &
++PRB_MSG  &
++PRB_MVER &
++PRB_PACK &
++PRB_PASS &
++PRB_PICK &
++PRB_POP  &
++PRB_PPOP &
++PRB_PRNT &
++PRB_PROG &
++PRB_PROP &
++PRB_PROT &
++PRB_QERY &
++PRB_QNTX &
++PRB_RAND &
++PRB_RCOL &
++PRB_REPL &
++PRB_RJZF &
++PRB_ROOT &
++PRB_S2A  &
++PRB_SCAT &
++PRB_SCOL &
++PRB_SETS &
++PRB_SHOW &
++PRB_SKEY &
++PRB_SLEJ &
++PRB_STAK &
++PRB_STIF &
++PRB_STOP &
++PRB_STRM &
++PRB_TBOX &
++PRB_TEMP &
++PRB_TRAN &
++PRB_VERI &
++PRB_WSLK &
++CHECKEXE &
++CRCOUNT  &
++PRB_JUL  &
++SHADE_IT &
++TOUCH
+PRBFUNC5.MAP
+PRBFUNC5.LIB
+

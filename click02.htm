@@ -1,0 +1,175 @@
+<HTML>
+<HEAD><TITLE>Features</TITLE></HEAD>
+<BODY BACKGROUND=click.jpg>
+<P>
+<CENTER><H1><I>Click! 2.03 Source Code Reformatter</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Features:</I></B></H2>
+</TH><TH>
+   <A HREF="click02.htm#01">CLICK.DBF and CLICK.NSX</A><BR>
+   <A HREF="click02.htm#02">Reindenting your Source Code</A><BR>
+   <A HREF="click02.htm#03">ReSpacing your Source Code</A><BR>
+   <A HREF="click02.htm#04">Alignment of Source Code Elements</A><BR>
+   <A HREF="click02.htm#05">Function calling Function Cross Reference</A><BR>
+   <A HREF="click02.htm#06">Module to Function Reference</A><BR>
+   <A HREF="click02.htm#07">Table and Index Cross Reference</A><BR>
+   <A HREF="click02.htm#08">Applying Cross References to your Source Code</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>CLICK.DBF and CLICK.NSX</I></H3></A>
+
+     CLICK.DBF is the table which is generated the first time you run
+     Click! It contains all of the functions available via libraries in
+     your system. The CLICK.NSX file is an index of these functions.
+
+     This file is used to create the function cross reference text file.
+
+     CLICK.DBF will be created if it is missing, or you can use one of
+     the following parameters when you run Click!
+
+     CLICK /REBUILD &#60Enter&#62
+     CLICK /UPDATE &#60Enter&#62
+     CLICK CLICK.DBF &#60Enter&#62
+
+     If you run Click! without using a .LNK file as the input system,
+     then Click! will refer to every library it finds the function in.
+
+     If you run Click! by specifying the name of a .LNK file, then
+     Click! scans the .LNK file to see which libraries are being used,
+     and isolates multiple libraries to the actual one which would be
+     used if you compiled with the existing environment.
+
+     There are three options for creating CLICK.DBF
+
+     1: You specify that you want to use the LIB= environment path.
+        (this is the way it worked before.)
+
+     2: You specify a path or set of paths, just like the environment,
+        except in CLICK.INI.
+
+     3: You specify that you want CLICK.EXE to search your hard drive
+        for every library in every directory, even including multiple
+        drives and network drives. This one might take longer, but
+        creates the ultimate cross reference.
+
+     From CLICK.INI
+
+     // options are ENVIRONMENT, (specified path), DRIVES
+     MAKE_CLICK_DBF_FROM=ENVIRONMENT
+     //MAKE_CLICK_DBF_FROM=C:\CLIPPER5\LIB;E:\GRUMP52\LIB;F:\FUNCKY\LIB
+     //MAKE_CLICK_DBF_FROM=DRIVES
+
+     If you select DRIVES in the above step, you can limit how deep the
+     recursion level will go with...
+
+     RECURSION_LIMIT=N
+
+     ... which means that it will only recurse the first N-1 levels and
+     will skip all N level directories and below.
+
+<A NAME="02"><BR><P><H3><I>Reindenting your Source Code</I></H3></A>
+
+     Click will easily and quickly reindent your source code. While you
+     cannot turn this feature off, you can change the amount of
+     indenting for each type of control structure using the following
+     commands in CLICK.INI.
+
+     INDENT_IF=3
+     INDENT_FOR=3
+     INDENT_CASE=3
+     INDENT_FUNC=3
+     INDENT_BEGIN=3
+     INDENT_WHILE=3
+     INDENT_CLASS=3
+
+     INDENT_FUNCTIONS=NO
+     INDENT_DO_CASE=NO
+
+<A NAME="03"><BR><P><H3><I>ReSpacing your Source Code</I></H3></A>
+
+     Click completely respaces your source code, opening up the elements
+     on each line of source code so they are easy to identify.
+
+     There is no part of CLICK.INI which controls this step. It is
+     CA-Clipper syntax aware.
+
+     However, you can compress some of the spaces back out on a case by
+     case basis by using the deflate directives.
+
+     // options are YES, NO
+     // deflate mode removes spaces
+     // following ({[ and preceding ]})
+     // following ,
+     // both sides of +
+     DEFLATE_(=YES
+     DEFLATE_{=YES
+     DEFLATE_[=YES
+     DEFLATE_,=YES
+     DEFLATE_+=YES
+
+<A NAME="04"><BR><P><H3><I>Alignment of Source Code Elements</I></H3></A>
+
+     The Aligner is a post processor which will make your source code
+     align elements in groups, so the code looks very professional.
+
+     POSTPROCESS_WITH_THE_ALIGNER=YES
+
+     @_SAY_GET_ALIGNMENT_METHOD=2
+
+        options are 0, no alignment
+                    1, each element type in it's own aligned column
+                    2, Columns aligned, but not by type
+                    3, Each element in it's own row.
+        If you use option 3, there is no reverse process.
+        Review the output before you commit to method 3.
+
+     ALIGN_DBCREATE_IN_THE_ALIGNER=YES
+
+<A NAME="05"><BR><P><H3><I>Function calling Function Cross Reference</I></H3></A>
+
+     The function calling function cross reference creates a file in the
+     output directory which contians a complete cross reference for
+     every function call in your source code. If Click! cannot resolve
+     the function reference in your source code, it goes to your library
+     files and finds the functions in your libraries!
+
+     You can control the name of the file with the following CLICK.INI
+     directive.
+
+     SOURCE_XREF_FILE=SRC_CROS.TXT
+
+<A NAME="06"><BR><P><H3><I>Module to Function Reference</I></H3></A>
+
+     Click! creates a Module to Function cross reference file in the
+     output directory, which contains a listing of every function in
+     every module.
+
+     You can control the name of the file with the following CLICK.INI
+     directive.
+
+     FUNCTION_XREF_FILE=FNC_CROS.TXT
+
+<A NAME="07"><BR><P><H3><I>Table and Index Cross Reference</I></H3></A>
+
+     Click! creates a Table and Index cross reference file in the output
+     directory, which contains a listing of every Table or Index used in
+     every module.
+
+     You can control the name of the file with the following CLICK.INI
+     directive.
+
+     TABLE_XREF_FILE=TBL_CROS.TXT
+
+<A NAME="08"><BR><P><H3><I>Applying Cross References to your Source Code</I></H3></A>
+
+     If you choose, you can allow Click! to put the function to function
+     and the module to fuction cross reference data into each of your
+     source code modules.
+
+     FUNCTION_REF_INTO_SOURCE=YES   ( module to function )
+
+     FUNCTION_XREF_INTO_SOURCE=YES  ( function to function )
+
+     TABLE_XREF_INTO_SOURCE=YES     ( table in module )
+
+     INDEX_XREF_INTO_SOURCE=YES     ( index in module )

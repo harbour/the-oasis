@@ -1,0 +1,78 @@
+<HTML>
+<HEAD><TITLE>Problems</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Problems:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake11.htm#01">Some problems you might encounter...</A><BR>
+   <A HREF="pbmake11.htm#02">******************************* Q and A ************************************</A><BR>
+   <A HREF="pbmake11.htm#03">My old make engine doesn't work now.</A><BR>
+   <A HREF="pbmake11.htm#04">My make script stops before it's finished.</A><BR>
+   <A HREF="pbmake11.htm#05">PBMake can't find my include files.</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Some problems you might encounter...</I></H3></A>
+<A NAME="02"><BR><P><H3><I>******************************* Q and A ************************************</I></H3></A>
+<A NAME="03"><BR><P><H3><I>My old make engine doesn't work now.</I></H3></A>
+
+Q. Why did my old make engine stop working when I installed PBMake?
+
+A. It really didn't. PBMake can create a file named MAKE.BAT. If you
+   mistakenly run PBMake in some directory in the path, then MAKE.BAT is
+   also available via the path. If the directory where MAKE.BAT is
+   earlier in the path than your old MAKE.EXE, MAKE.BAT will run.
+
+   Solution:
+   Go to each directory in your path, and delete MAKE.BAT if it exists.
+
+   or
+
+   Place the directory where your old make engine resides first in your
+   path.
+
+<A NAME="04"><BR><P><H3><I>My make script stops before it's finished.</I></H3></A>
+
+Q. My make script stops part way and doesn't complete.
+
+A. If any action in the make fails, PBMake intentionally stops.
+
+   If you are compiling a module, and your compiler ends with an
+   errorlevel higher than 0 when it quits, the make process stops.
+
+   Compilers usually exit with an errorlevel of 0 if everything went OK.
+
+   If you want Clipper to exit with an errorlevel when something goes
+   wrong, you must add /ES2 to the FLAG= directive.
+   (Clipper 5.0 or higher)
+
+A. There are 5 directives which will allow you to run an executable
+   file: SUCCESS=, FAILURE=, NONEED=, PRECOMPILECMD= and PRELINKCMD=.
+   If you use one of these to run a batch file, and you forget to use
+   the dos CALL command which allows nested batch files, MAKE.BAT will
+   lose scope and stop running.
+
+   Solution:
+   Check your link script for any of the above directives, and check to
+   see if they are calling a batch file. If so, place the CALL directive
+   in the directive before the batch file name.
+
+   SUCCESS= GOODRUN.BAT
+
+   Should be:
+
+   SUCCESS= CALL GOODRUN.BAT
+
+<A NAME="05"><BR><P><H3><I>PBMake can't find my include files.</I></H3></A>
+
+Q. PBMake says my INCLUDE= files don't exist.
+
+A. You must include the complete path if the include files you are
+   referring to are not in the current directory. Include files are
+   checked for existance, and PBMake stops if it cannot find them.
+
+   Once you have determined that the paths are wrong in your .MAK file,
+   (usually caused by taking code from one machine to another) you can
+   simply run PBInit with the Update option and it will read in your
+   .MAK file, check the paths, and correct any that are incorrect.

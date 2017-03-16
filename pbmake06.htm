@@ -1,0 +1,620 @@
+<HTML>
+<HEAD><TITLE>PBMake Features</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>PBMake Features:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake06.htm#01">Memory Usage</A><BR>
+   <A HREF="pbmake06.htm#02">What is a section?</A><BR>
+   <A HREF="pbmake06.htm#03">Directives used in PBMake</A><BR>
+   <A HREF="pbmake06.htm#04">PBMake Conditionals ( #DEFINE  #IFDEF  #IFNDEF  #ELSE  #ENDIF  #UNDEF )</A><BR>
+   <A HREF="pbmake06.htm#05">Directive Case and Space Sensitivity</A><BR>
+   <A HREF="pbmake06.htm#06">Directive Limitations</A><BR>
+   <A HREF="pbmake06.htm#07">Commenting your Make Script</A><BR>
+   <A HREF="pbmake06.htm#08">OBJDIR=   Placing Objects in another directory</A><BR>
+   <A HREF="pbmake06.htm#09">SRCDIR=   Placing Source in another directory</A><BR>
+   <A HREF="pbmake06.htm#10">File Validity Checking</A><BR>
+   <A HREF="pbmake06.htm#11">INCLUDE=   What about INCLUDE files?</A><BR>
+   <A HREF="pbmake06.htm#12">LIB=   What about LIB files?</A><BR>
+   <A HREF="pbmake06.htm#13">SUCCESS=, FAILURE= and NONEED=</A><BR>
+   <A HREF="pbmake06.htm#14">PRECOMPILECMD= and PRELINKCMD=</A><BR>
+   <A HREF="pbmake06.htm#15">How do I use the 'Jump to Editor on Compile Failure' feature?</A><BR>
+   <A HREF="pbmake06.htm#16">How to use the CLEANUP= directive.</A><BR>
+   <A HREF="pbmake06.htm#17">What is the /ALL flag for?</A><BR>
+   <A HREF="pbmake06.htm#18">What is the /LINK flag for?</A><BR>
+   <A HREF="pbmake06.htm#19">What is the /P flag for?</A><BR>
+   <A HREF="pbmake06.htm#20">My linker doesn't like the @ symbol!</A><BR>
+   <A HREF="pbmake06.htm#21">How big can my make scripts get?</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Memory Usage</I></H3></A>
+
+      Since PBMake uses your .MAK script to create a batch file that
+      does the actual work, there is <B> NO memory overhead </B> during the
+      compiling and linking process.
+
+      Also, other MAKE processes stay resident and shell to DOS each
+      time a source module is compiled, or a linker is run. This memory
+      swapping adds a lot of time to the process, so if you currently
+      use another MAKE engine and you use it in the simple form, you
+      will see some speed savings by switching to PBMake.
+
+<A NAME="02"><BR><P><H3><I>What is a section?</I></H3></A>
+
+      Sections are provided in PBMake scripts so you can place many
+      different sets of directives into a single script.
+
+      PBMake can use up to 99 sections.
+
+      This example has three sections:
+
+        EXEFILE=
+
+        LINKFILE=
+
+        LINKER=
+
+        COMPILER1=
+        FLAG1=
+        PROG1=
+        SRCDIR1=
+        OBJDIR1=
+
+        COMPILER2=
+        FLAG2=
+        PROG2=
+        SRCDIR2=
+        OBJDIR2=
+
+        COMPILER3=
+        FLAG3=
+        PROG3=
+        SRCDIR3=
+        OBJDIR3=
+
+<A NAME="03"><BR><P><H3><I>Directives used in PBMake</I></H3></A>
+
+             <B>These directives are not case sensitive.</B>
+
+      EXEFILE=                        The target you are creating
+      TARGET=                         (a synonym for EXEFILE=)
+
+    <B>+</B> LIB=                            Libraries that the target depends on
+
+      PRELINKCMD=                     Runs after compiler and before linker
+
+      LINKFILE=                       The linker script for the EXEFILE
+      LINKER=                         The linker you want to use
+      LINKER_SEP=                     Optional link file prefix
+
+    <B>+</B> INCLUDE=                        The include files you depend on
+    <B>+</B> INCLUDE1=  ...  INCLUDE99=      (can be different for each section)
+
+      PRECOMPILECMD=                  Runs before the first compile
+
+      COMPILER=                       Defaults to CLIPPER
+      COMPILER1=  ....  COMPILER99=   (can be different for each section)
+
+      ONERROR=                        This sets up PBMake so that when
+      ONERROR1=   ....   ONERROR99=   an error is encountered in the
+                                      compile process, it will jump to
+                                      the editor of your choice.
+
+      ERRFILE=                        Placing a file name here will
+                                      override the default of ${pbm}.err
+
+      ERRBAT=                         Placing a file name here will
+      ERRBAT1=   ...   ERRBAT99=      override the default of ${pbm}.bat
+
+    <B>+</B> CLEANUP=                        Cleans up (deletes) temp files.
+
+      NONEED=                         Runs if there was nothing to do
+      SUCCESS=                        Runs if everything worked
+      FAILURE=                        Runs if something failed
+
+      SRCDIR=                         Where the source code resides
+      SRCDIR1=  ....  SRCDIR99=       (can be different for each section)
+
+      OBJDIR=                         Where the object code will go
+      OBJDIR1=  ....  OBJDIR99=       (can be different for each section)
+
+      SRCEXT=                         Defaults to .PRG for Clipper
+      SRCEXT1=  ....  SRCEXT99=       (can be different for each section)
+
+      OBJEXT=                         Defaults to .OBJ for Clipper
+      OBJEXT1=  ....  OBJEXT99=       (can be different for each section)
+
+      FLAG1=    ....  FLAG99=         The compiler flags for each section
+
+    <B>+</B> PROG1=    ....  PROG99=         The source files to compile
+
+      #DEFINE                         Conditional Script Commands
+      #IFDEF 
+      #IFNDEF
+      #ELSE
+      #ENDIF
+      #UNDEF
+
+    <B>+</B> Denotes directives that can be used additively. This means
+      that if you need more of each type of these directives than will
+      conveniently fit on one line, you may add more and more of these
+      until all files are listed.
+
+      If you use any of the other directives more than once, PBMake will
+      use the last one read in.
+
+<A NAME="04"><BR><P><H3><I>PBMake Conditionals ( #DEFINE  #IFDEF  #IFNDEF  #ELSE  #ENDIF  #UNDEF )</I></H3></A>
+
+      PBMake allows for the following conditional directives from the
+      command line, which can create conditional make scripts.
+
+      #DEFINE
+      #IFDEF
+      #IFNDEF
+      #ELSE
+      #ENDIF
+      #UNDEF
+
+      These definitions can be nested up to 7 deep
+
+      Definition parameters are defined by prefixing a /D
+
+      For example, if you want to define DEMO to a PBMake script, you
+      would pass /DDEMO as a parameter.
+
+      Definitions are passed as parameters on the command line after the
+      name of the make script, like:
+
+      MAKE PBMAKE /DDEMO /DDEBUG
+      or
+      MAKE PBMAKE /DDEBUG
+
+      <B>Note!</B> As of Version 2.00, these defines are passed on into the
+      linker script. Actually, your .LNK script is processed into a
+      temporary script which is then used to perform the link.
+
+      With definitions like these, you can do the following:
+
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+LINKER=BLINKER
+
+PROG1=PBMAKE BUFFREAD
+
+#IFDEF DEMO
+
+   EXEFILE=DEMO\PBMAKE.EXE
+
+   LINKFILE=DEMO.LNK
+   OBJDIR=DEMO\OBJ\
+
+   #IFNDEF DEBUG
+      FLAG1= /M /N /W /Q /ES2 /DDEMO
+   #ELSE
+      FLAG1= /M /N /W /Q /ES2 /DDEMO /B
+   #ENDIF
+
+   SUCCESS=PKLITE DEMO\PBMAKE -E -A
+
+#ELSE
+
+   EXEFILE=REG\PBMAKE.EXE
+
+   LINKFILE=REG.LNK
+   OBJDIR=REG\OBJ\
+
+   #IFDEF DEBUG
+      FLAG1= /M /N /W /Q /ES2 /B
+   #ELSE
+      FLAG1= /M /N /W /Q /ES2
+   #ENDIF
+
+   SUCCESS=PKLITE REG\PBMAKE -E -A
+
+#ENDIF
+
+NONEED=ECHO PKLite not Necessary
+
+<A NAME="05"><BR><P><H3><I>Directive Case and Space Sensitivity</I></H3></A>
+
+      Directives are not case sensitive.
+
+      Spaces after the = sign are removed and do not effect the make
+      engine. So:
+
+      objdir=  obj\
+
+      works the same as:
+
+      OBJDIR=OBJ\
+
+      <B>Please note!</B>
+
+      OBJDIR = OBJ\
+            <B>^^</B>
+            <B>^^</B>
+            <B>^^</B>
+      will not work, as the space between OBJDIR and = will cause the
+      PBMake to view the line as a comment.
+
+      <B>The = sign must follow the directive with no spaces between.</B>
+
+<A NAME="06"><BR><P><H3><I>Directive Limitations</I></H3></A>
+
+      There are five directives that can be used on more than one line
+      in any script.
+
+      CLEANUP=
+      INCLUDE=
+      INCLUDE1=  ...  INCLUDE99=
+      LIB=
+      PROG1=     ...  PROG99=
+
+      These lines are completely additive, and any of them can be used
+      to add more and more directives to that category. Like:
+
+      LIB= F:\FLEXFILE\LIB\FLEX52.LIB
+      LIB= F:\COMIX\LIB\CMX52.LIB
+
+      INCLUDE=C:\SOMEDIR\GLOBAL.CH
+      INCLUDE=C:\ANOTHER\GLOBAL2.CH
+
+      OBJDIR=OBJ\
+
+      FLAG1= /W /M /N /Q /ES2
+
+      PROG1=HELP     DBF_OPEN PRINTER  WHERPRNT P_PAYMNT J_BILL
+      PROG1=ERROR52  INVCOST  GOODNTX  ADDQUEUE VENEDIT  VENADD
+      PROG1=EDTQUEUE FBROWSE  DEPTADD  PDOTADD  ORDRFILL CLEAREM
+
+      INCLUDE2=C:\MSC\INCLUDE\C_GLOBAL.H
+      INCLUDE2=PUBLICS.H
+      INCLUDE2=FLD_MAST.H
+
+      CLEANUP=TEMP.TXT
+      CLEANUP=*.$*
+      CLEANUP=$*.*
+
+      <B>Up to 99 sections of directives can be used.</B>
+
+<A NAME="07"><BR><P><H3><I>Commenting your Make Script</I></H3></A>
+
+      You may comment the MAKE script by simply typing in whatever you
+      want on any line that does not start with a directive.
+
+             <B>Note!</B> <B> End of line comments are not allowed. </B>
+
+      In short, there are directive lines and ignored lines.
+
+      Any line not starting with a directive will be ignored.
+
+<A NAME="08"><BR><P><H3><I>OBJDIR=   Placing Objects in another directory</I></H3></A>
+
+      The OBJDIR= directive is optional.
+
+      Use it if you want to place your objects in a different directory
+      from where you run the make script.
+
+          <B>Note!</B> When you use the OBJDIR= directive, your objects
+          will not be built in the current directory. This means that
+          your linker script will also need to refer to the actual
+          location of the objects.
+
+     You may also override the OBJDIR=, which is active across all
+     sections with individual directives for each section.
+
+     So, you can do this:
+
+     OBJDIR=OBJ\
+
+     OBJDIR2=\OTHER\OBJ
+
+<A NAME="09"><BR><P><H3><I>SRCDIR=   Placing Source in another directory</I></H3></A>
+
+      The SRCDIR= directive is optional. (formerly SOURCEDIR=)
+
+      Use it if you do not keep your source code in the directory where
+      you run the make script from.
+
+     You may also override the SRCDIR=, which is active across all
+     sections with individual directives for each section.
+
+     So, you can do this:
+
+     SRCDIR=SRC\
+
+     SRCDIR2=\OTHER\SRC
+
+<A NAME="10"><BR><P><H3><I>File Validity Checking</I></H3></A>
+
+      OBJDIR=, SRCDIR=, LIB= and INCLUDE= directives are checked for
+      validity.
+
+      In the case of the OBJDIR= and SRCDIR= directives, if an
+      invalid path is used, the make script will halt with an
+      appropriate error message.
+
+      In the case of the INCLUDE= and LIB= directives, the existance of
+      each file is validated. The make script will halt with an
+      appropriate error message when it comes to an invalid one.
+
+<A NAME="11"><BR><P><H3><I>INCLUDE=   What about INCLUDE files?</I></H3></A>
+
+      The INCLUDE= directive is optional and has the following
+      properties
+
+      1. The time and date stamps of all files placed in the INCLUDE=
+         directives will be compared to the time and date stamps of all
+         of the objects.
+
+      2. Any object older than any file in the INCLUDE= directive will
+         be recompiled.
+
+      <B> PBMake does not check to see if the source file contains an </B>
+      <B> actual reference to the include file. </B>
+
+      The assumption is that ALL source depend on the INCLUDE=
+      directives.
+
+      Any file referenced in a INCLUDE= directive that does not exist as
+      an actual file will stop the make process with an appropriate
+      error.
+
+      You can override the master INCLUDE= directive by using numbered
+      versions for each section. For example, you can:
+
+      INCLUDE= SOMETHIN.CH
+      SRCEXT=.PRG
+
+      INCLUDE3= mystuff.h
+      SRCEXT3=.C
+
+<A NAME="12"><BR><P><H3><I>LIB=   What about LIB files?</I></H3></A>
+
+      The LIB= directive is optional and has the following properties.
+
+      1. The time and date stamps of all files placed in the LIB=
+         directives will be compared to the time and date stamp of the
+         target file.
+
+      2. If the target is older than any file in the LIB= directive
+         it (the target) will be relinked.
+
+      Any file referenced in a LIB= directive that does not exist as an
+      actual file will stop the make process with an appropriate error.
+
+<A NAME="13"><BR><P><H3><I>SUCCESS=, FAILURE= and NONEED=</I></H3></A>
+
+      With the SUCCESS= and FAILURE= directives, you can execute a DOS
+      program based on whether the make process succeeded.
+
+      <B>Note!</B> If it exists, and there is nothing to do, the NONEED=
+      directive will execute. If you don't include the NONEED=
+      directive, but you have included the SUCCESS= directive, the
+      SUCCESS= directive will execute when there is nothing to do.
+
+      Please see the companion commands, PRECOMPILECMD= and PRELINKCMD=
+
+      If you need to run another batch file, remember to use the CALL
+      batch file command, like:
+
+      SUCCESS=CALL VERS_CTL.BAT
+      FAILURE=CALL BADCOMP.BAT
+      NONEED=ECHO Nothing Happened. Didn't use SUCCESS= or FAILURE=
+
+<A NAME="14"><BR><P><H3><I>PRECOMPILECMD= and PRELINKCMD=</I></H3></A>
+
+      The PRECOMPILECMD= and PRELINKCMD= directives are for performing
+      actions just before the compile process starts, or just before the
+      linking process starts.
+
+      <B>Please note the following behaviour!</B>
+
+      The PRECOMPILECMD= directive will NOT run if there is nothing to
+      compile!
+
+      The PRELINKCMD= directive will NOT run if there is nothing to
+      link!
+
+      You can use either of these commands to run any DOS program or
+      batch file.
+
+      If you need to run another batch file, remember to use the CALL
+      batch file command, like:
+
+      PRECOMPILECMD=CALL PRECOMP.BAT
+
+      PRELINKCMD=DEL SOMEFILE.XXX
+
+<A NAME="15"><BR><P><H3><I>How do I use the 'Jump to Editor on Compile Failure' feature?</I></H3></A>
+
+      ONERROR= is the Compile Failure directive. It allows you to use
+      PBMake in a way that when a compiler error is encountered, your
+      editor will be invoked and you will be fast forwarded to the point
+      in your source code where the error occured.
+
+      A note about Clipper, here... Clipper does NOT normally create a
+      DOS errorlevel on exit after failure. <B> You must place the /ES2 flag </B>
+     <B> in the flag directive to use this error trap feature. </B>
+
+      Here is an example for Clipper and Qedit:
+
+      FLAG= /M /N /W /ES2       ( or whatever flags you use + /ES2 )
+
+      ONERROR= CLIPPER Q -N
+
+      Here is an example for Clipper and MultiEdit:
+
+      FLAG= /M /N /W /ES2       ( or whatever flags you use + /ES2 )
+
+      ONERROR= CLIPPER ME /L
+
+      Here's how it works:
+
+      PBMake tells DOS to redirect the text output from your compiler
+      into a file.
+
+      When PBMake encounters a DOS error in the make process, it jumps
+      to the compiler error trap in MAKE.BAT file.
+
+      The compiler error trap executes PBERRLIN.EXE and passes in a
+      bunch of information from your .MAK file:
+
+      &#60parm1&#62 = The redirected output from the compiler.
+                ( defaults to ${pbm}.err, override with ERRFILE= )
+      &#60parm2&#62 = Batch file name to be created.
+                ( defaults to ${pbm}.bat, override with ERRBAT= )
+      &#60parm3&#62 = The Compiler that created the error.
+      &#60parm4&#62 = The DOS command that invokes your editor.
+      &#60parm5&#62 = The directive that causes your editor to jump to a line.
+
+      When PBERRLIN.EXE executes it parses the &#60parm1&#62 file looking for
+      two pieces of information. It determines the source module that
+      failed, and it determines the line number where the first error
+      originated. ( Please note that you are only supplying the 3,4 and
+      5 &#60parms&#62 in the ONERROR= line. )
+
+      After PBERRLIN.EXE has the information it needs, it creates the file
+      named in &#60parm2&#62.
+
+      MAKE.BAT then executes the &#60parm2&#62 file that was just created.
+
+      The &#60parm2&#62 file contains the editor directive to edit the failed
+      compile source code and the directive to jump to the correct line
+      number. It also loads the error file as the second file, so if
+      there is more than one error, you can swap windows back and forth
+      to fix all the errors in one shot.
+
+      Fortunately, this takes longer to read about than to execute. It's
+      really quite fast and a very time saving feature.
+
+      The files in &#60parm1&#62 and &#60parm2&#62 are automatically added to the
+      CLEANUP= directive.
+
+<A NAME="16"><BR><P><H3><I>How to use the CLEANUP= directive.</I></H3></A>
+
+      The CLEANUP= directive will clean up after the temp files that are
+      created during the compile and link process. Most notably, the two
+      junk files from the ERRFILE= and ERRBAT= directives (which always
+      have defaults) are cleaned up after (this happens automatically).
+
+      Of course, you can use this to keep any filespec deleted out of
+      your working directory.
+
+      For Example:
+
+      CLEANUP= *.TMP
+
+      If you wish to suppress the automatic deletion of the ERRFILE=
+      and ERRBAT= files, use the following example:
+
+      CLEANUP= NONE
+
+<A NAME="17"><BR><P><H3><I>What is the /ALL flag for?</I></H3></A>
+
+      The /ALL flag on the DOS command line will force all objects to be
+      rebuilt, regardless of their time and date stamps.
+
+      It has the same effect as deleting all of your objects, without
+      going through the actual process of deleting them. Instead, PBMake
+      thinks that all of the time and date comparisons failed, ie:
+      PBMake thinks that all of the source code is newer than all of the
+      objects.
+
+      MAKE MYPROG /ALL
+
+      PBMake decides when the linker needs to run based on a few
+      criteria.
+
+      1. The output file is missing.
+      2. The link script is newer than the output.
+      3. An object was rebuilt. (like in the /ALL directive)
+      4. An object was newer then the output.
+
+      Use the /ALL command just before you are ready to distribute your
+      application, to make sure that everything has been freshly
+      compiled.
+
+      Another time to use the /ALL command is when you are using the
+      debugger. When you add the /B switch to the Clipper Compiler, you
+      will want to rebuild all of the objects, so the debugging
+      information is included in the objects. Then, when you are done
+      debugging, you will remove the /B flag, and run /ALL again, to
+      remove the extra debugging code and keep your executable faster
+      and smaller.
+
+<A NAME="18"><BR><P><H3><I>What is the /LINK flag for?</I></H3></A>
+
+      The /LINK flag on the DOS command line will force the linker to
+      run regardless of the need to recompile any objects that the
+      target depends on.
+
+      MAKE MYPROG /LINK
+
+      Normally, if you have set up your dependencies correctly, this
+      will never need to be done, but the option is there if you need
+      it.
+
+<A NAME="19"><BR><P><H3><I>What is the /P flag for?</I></H3></A>
+
+      PBMake uses a script preprocessor to do the actual make and link
+      process. This allows you to use a linker that does not support
+      #defines, since PBMake does the work ahead of time.
+
+      If you are wondering what the actual script contains that is being
+      passed to the make process or the link process, simply pass /P on
+      the command line, and PBMake will not clean up the preprocessor
+      scripts. Then, you can look at them.
+
+      The .MAK file preprocesses into the .PPM file of the same name.
+      The .LNK file preprocesses into the .PPL file of the same name.
+
+<A NAME="20"><BR><P><H3><I>My linker doesn't like the @ symbol!</I></H3></A>
+
+      If you are using PBMake for a linker that does not require the @
+      symbol before the script name, you can eliminate it by using the
+      LINKER_SEP= directive.
+
+      You can use this directive to substitute a new symbol...
+
+      LINKER_SEP=%
+
+      ...or to eliminate the symbol:
+
+      LINKER_SEP=NONE
+        or
+      LINKER_SEP=
+
+      If you don't use the LINKER_SEP= directive, it defaults to:
+
+      LINKER_SEP=@
+
+<A NAME="21"><BR><P><H3><I>How big can my make scripts get?</I></H3></A>
+
+      If you cannot fit all of these dependencies on one line, you
+      can add more and more lines of these directives.
+
+    <B>+</B> LIB=                            The library files you depend on
+    <B>+</B> INCLUDE=                        The include files you depend on
+    <B>+</B> INCLUDE1=  ...  INCLUDE99=      (can be different for each section)
+    <B>+</B> PROG1=    ....  PROG99=         The source files to compile
+
+    <B>+</B> Denotes directives that can be used additively. This means
+      that if you need more of each type of these directives than will
+      conveniently fit on one line, you may add more and more of these
+      until all files are listed.
+
+      They are additive. The basic limit is that of Clipper. No more
+      than 4096 elements in any directive group (they are arrays).
+
+      If you use any of the other directives more than once, PBMake will
+      use the last one read in.
+
+      It is highly unlikely you will ever reach the limits of PBMake.
+

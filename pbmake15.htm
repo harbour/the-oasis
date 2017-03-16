@@ -1,0 +1,351 @@
+<HTML>
+<HEAD><TITLE>Changes</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Changes:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake15.htm#01">Changes for version 2.16 (11/10/98)</A><BR>
+   <A HREF="pbmake15.htm#02">Changes for version 2.15 (09/02/98)</A><BR>
+   <A HREF="pbmake15.htm#03">Changes for version 2.14 (12/20/97)</A><BR>
+   <A HREF="pbmake15.htm#04">Changes for version 2.13 (10/12/97)</A><BR>
+   <A HREF="pbmake15.htm#05">Changes for version 2.12 (04/07/97)</A><BR>
+   <A HREF="pbmake15.htm#06">Changes for version 2.11 (03/16/97)</A><BR>
+   <A HREF="pbmake15.htm#07">Changes for version 2.10 (02/15/97)</A><BR>
+   <A HREF="pbmake15.htm#08">Changes for version 2.02 (01/13/97)</A><BR>
+   <A HREF="pbmake15.htm#09">Changes for version 2.01 (01/08/97)</A><BR>
+   <A HREF="pbmake15.htm#10">Changes for version 2.00 (11/02/96 Beta)</A><BR>
+   <A HREF="pbmake15.htm#11">Changes for version 2.00 (09/15/96 Beta)</A><BR>
+   <A HREF="pbmake15.htm#12">Changes for version 1.99</A><BR>
+   <A HREF="pbmake15.htm#13">Changes for version 1.98</A><BR>
+   <A HREF="pbmake15.htm#14">Changes for version 1.97</A><BR>
+   <A HREF="pbmake15.htm#15">Changes for version 1.96</A><BR>
+   <A HREF="pbmake15.htm#16">Changes for version 1.95</A><BR>
+   <A HREF="pbmake15.htm#17">Changes for version 1.94</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Changes for version 2.16 (11/10/98)</I></H3></A>
+
+  Translated PBMAKE.NG to PBMAKE.HTM for those of you who don't have or
+  wish to use Norton Guides. Of course, the .NG is still there.
+
+<A NAME="02"><BR><P><H3><I>Changes for version 2.15 (09/02/98)</I></H3></A>
+
+  Changed the preprocessor support for .MAK scripts. Now, you can not
+  only preprocess the #defines in your .MAK scripts, but with the /P
+  parameter, they will be left in the working directory so you can see
+  what the preprocessor did to your .MAK and .LNK scripts.
+
+  By passing /P during a make, the temporary preprocessor scripts are
+  not deleted in the cleanup pass. The resulting files will be named
+  .PPL for the preprocessed link file and .PPM for the preprocessed make
+  file. This follows the Clipper convention of /P creating a .PPO file.
+
+  .PPO = Clipper Preprocessor of .PRG
+  .PPM = PBMake  Preprocessor of .MAK
+  .PPL = PBMake  Preprocessor of .LNK
+
+---
+
+  Dropped WWPACK for compression, and used Blinker 5.0 data compression,
+  which is much faster now.
+
+---
+
+Added __wait_b.obj to link script for fast CPU handling.
+
+---
+
+  Added EPOCH command to eliminate any possible Y2K problems.
+
+  SET EPOCH TO YEAR( DATE() ) - 50
+
+<A NAME="03"><BR><P><H3><I>Changes for version 2.14 (12/20/97)</I></H3></A>
+
+  PBMake now supports the Xbase++ (XPP) compiler.
+
+  With the improved PBERRLIN.EXE, you can jump to the error in your
+  editor when using XPP as your compiler.
+
+  PBINIT.EXE also supports the XPP compiler with a new section in
+  PBMAKE.INI for the defaults for XPP link script creation.
+
+  PBINIT.EXE now supports both ILINK and ALINK linkers. These are the
+  IBM Linker and the newer Alaska Linker written by Alaska to replace
+  ILINK which has become problematic for Xbase++ users.
+
+---
+
+  Added support to PBERRLIN.EXE for versions of Vedit prior to 4.x. In
+  order to not conflict with the VEDIT parameter. In order for this to
+  work, _copy_ your 3.x or older VEDIT.EXE to VCL.EXE. The existing
+  VEDIT parameter is for version 4.x and up.
+
+<A NAME="04"><BR><P><H3><I>Changes for version 2.13 (10/12/97)</I></H3></A>
+
+  Changed link and make scripts to create much smaller executables.
+
+---
+
+  PBINIT was ignoring #include files with ' for delimiters.
+
+  This worked...
+  #include "myinc1.ch"
+
+  This didn't...
+  #include 'myinc2.ch'
+
+  It's fixed.
+
+---
+
+  PBINIT was ignoring #include files entirely when ADVANCED option was
+  selected.
+
+  Of course, it's fixed!
+
+---
+
+  Fixed bug in PBINIT which missed some files when building from a link
+  script. This was when the line items were delimited with , only, and
+  no spaces.
+
+  Previously, this
+
+  FI PROG1
+  FI PROG2
+  FI PROG3,PROG4,PROG5
+
+  Would only yield PROG1 and PROG2 in the .MAK file.
+
+  Now, PBINIT uses spaces and commas as delimiters instead of just
+  spaces.
+
+<A NAME="05"><BR><P><H3><I>Changes for version 2.12 (04/07/97)</I></H3></A>
+
+  Repaired broken array in code. Bugfix only.
+
+<A NAME="06"><BR><P><H3><I>Changes for version 2.11 (03/16/97)</I></H3></A>
+
+  To fix the color problems, I removed calls to NanForum FT_N2COLOR()
+  function and put back in the calls to NTOCOLOR() from Clipper Tools
+  library.
+
+  Commented out pure Clipper functions FILETIME() and FILEDATE() and
+  allowed them to resolve from Clipper Tools library which is much
+  faster.
+
+  Replaced BUFFREAD.PRG with OBUFREAD.OBJ
+
+  Replaced PROFILE.PRG with new PROFILE.PRG with buffered reads.
+
+<A NAME="07"><BR><P><H3><I>Changes for version 2.10 (02/15/97)</I></H3></A>
+
+  Phil converted all non Clipper functions used in PBMake to either
+  Nanforum library calls or pure Clipper source code. (mostly CT3)
+
+  Brian Dukes has taken the 2.02 source code and added code which
+  provides Version Control awareness. As far as we know, this places
+  PBMake in a very small class of make engines, and the other ones are
+  reputed to be cranky or very difficult to use. Brian, in adding RCS
+  support, which is a GNU freeware Revision Control System, has added a
+  powerful new edge to an already excellent make engine.
+
+  RCS checking is implemented on all levels.
+
+  SOURCE, INCLUDE and LIBRARY files are checked!
+
+  Thank you Brian!
+
+<A NAME="08"><BR><P><H3><I>Changes for version 2.02 (01/13/97)</I></H3></A>
+
+  Found and corrected bug created during the code optimization leading
+  to version 2.00, which caused areas between 10 and 99 become
+  unprocessable.
+
+<A NAME="09"><BR><P><H3><I>Changes for version 2.01 (01/08/97)</I></H3></A>
+
+  Removed beta status
+
+  PBINIT now defaults to #2:
+
+     Update .LIB and .CH paths.
+
+<A NAME="10"><BR><P><H3><I>Changes for version 2.00 (11/02/96 Beta)</I></H3></A>
+
+  PBInit now can create a link script from the source code in any single
+  directory.
+
+  Added sections to PBINIT.INI for CLIPPER, C, TASM and MASM for default
+  link script text.
+
+  Updated the .NG for the new features in PBInit.
+
+  PBInit can now refresh the paths that are imbedded in your .MAK files.
+
+  This means that if you take the code back and forth between two
+  machines, and they are set up differently as far as compiler
+  environment goes, you can instantly update the .MAK files to work on
+  either machine.
+
+<A NAME="11"><BR><P><H3><I>Changes for version 2.00 (09/15/96 Beta)</I></H3></A>
+
+  ONERROR= &#60compiler&#62 &#60editor&#62 &#60editor directive&#62
+
+    PBMake now includes a compiler error trap which makes your editor
+    jump directly to the line in your code which created the error.
+
+    Of course, you will have to use an editor that supports this, like
+    Qedit or MultiEdit. ( and many others )
+
+    PBMake also loads the error list at the same time as the source
+    module with the error. Now, you can work all of the errors found in
+    that source module in one pass by flipping back and forth between
+    the source and the error list.
+
+    You can set PBMake up to compile multiple languages and jump on
+    error to a different editor for each language.
+
+    PBErrLine is used to parse the captured output from the compiler and
+    then create a batch file which calls your editor to edit the correct
+    source code at the line number where the error occurred.
+
+    PBErrLine can correctly identify errors from Clipper, Microsoft C,
+    Turbo Assembler and Microsoft Assembler.
+
+
+  PBInit now creates a small batch file named MK.BAT. MK.BAT is simply a
+  shortcut file that eliminates you needing to type MAKE FILENAME, since
+  that is what it contains. I guess I'm just lazy.
+
+    So, assuming that you limit yourself to one executable per
+    directory, you can compile by typing:
+
+    MK &#60Enter&#62
+
+
+  PBMake now has a CLEANUP= directive which will delete junk and temp
+  files out of your working directory.
+
+
+  More fine tuning for speed. Chopped out a bunch of redundant code.
+
+
+  Updated this .NG file extensively.
+
+
+  Added the DOS command line /LINK flag, which will cause the linker to
+  run even if the make engine does not think it needs to.
+
+
+  New Features for PBInit!
+
+  Rather than it's original intent of creating a blank template for you
+  to start from, which it can still do, PBInit is now capable of
+  creating .MAK scripts directly from your link script. In fact, PBInit
+  has received a complete overhaul. PBInit can create a far more
+  comprehensive .MAK script that you would generally create for
+  yourself, including complete references to any .LIB file, all .CH
+  files used in your source code and the correct FLAG= lines for each
+  source code module.
+
+  PBInit now uses a small .INI file in the same directory as the
+  executable to set up the default compiler, editor and editor flag for
+  the jump to error feature. You do not need to have this file in your
+  working directory.
+
+
+  PBMake now preprocesses your .LNK script with the same directives
+  that were passed in to the .MAK script.
+
+  This means that you can now use #IFDEF, #IFNDEF, #ELSE, #ENDIF,
+  #DEFINE and #UNDEF in your link scripts and they will be obeyed based
+  on the same rules that apply to PBMake .MAK scripts.
+
+  This will now work correctly in your link scripts:
+
+  #ifdef DEBUG
+     file CLD.LIB
+  #endif
+
+  Since PBMake now preprocesses your link script, it uses the processed
+  link script to link with instead of the real link script. If you want
+  to see the processed link script which is normally cleaned up after
+  immediately, simply place a /P on the make request line. The processed
+  link file will have the same name as the original link script with a
+  .PPL extension. (MYLINK.LNK becomes MYLINK.PPL)
+
+  PBInit now has the ability to refresh the paths on your INCLUDE= and
+  LIB= files in the .MAK script. This is useful if you take your make
+  files back and forth to two machines that are not set up identically.
+
+<A NAME="12"><BR><P><H3><I>Changes for version 1.99</I></H3></A>
+
+  PBInit size was reduced by 57K (this version was never released)
+
+<A NAME="13"><BR><P><H3><I>Changes for version 1.98</I></H3></A>
+
+  Fixed ;; problem when used for .ASM compiling.
+
+<A NAME="14"><BR><P><H3><I>Changes for version 1.97</I></H3></A>
+
+  Used a new function to check for the existance of a directory which no
+  longer relies on the creation of a file. It is faster and creates
+  nothing to clean up after.
+
+<A NAME="15"><BR><P><H3><I>Changes for version 1.96</I></H3></A>
+
+  Repaired the case sensitivity of the object of some directives.
+
+  OBJEXT=.obj  now works correctly.
+
+  Tightened up the code for a minor speed gain.
+
+<A NAME="16"><BR><P><H3><I>Changes for version 1.95</I></H3></A>
+
+  Repaired global INCLUDE= directive.
+
+  Added LIB= directive, which is additive. This will allow you to create
+  dependencies against libraries, so when they are updated, the target
+  will be relinked.
+
+  Added TARGET= as a synonym for EXEFILE= . You may use either.
+
+  Rearranged the .NG contents.
+
+<A NAME="17"><BR><P><H3><I>Changes for version 1.94</I></H3></A>
+
+  Broke PBInit out of PBMake program for size/speed considerations.
+
+  Added comments to PBInit scripts.
+
+  Added complex PBInit scripts.
+
+  PBInit now asks for the number of sections to build.
+
+  PBMake now reports ALL missing files and bad directories and other
+  errors, instead of one at a time.
+
+  PBMake can now be passed conditional definitions on the command line
+  to skip or include portions of the make script.
+
+  The PBMake understands the following definition directives:
+
+    #DEFINE
+
+    #IFDEF / #IFNDEF
+    #ELSE
+    #ENDIF
+
+    #UNDEF
+
+  To pass a definition to PBMake, prefix it with /D and pass it as a
+  parameter to the dos command line.
+
+    <B>Please note!</B> These definitions are NOT passed on to the FLAG=
+                 sections of the compiler.
+
+    <B>Please note!</B> These definition directives can only be nested to 7
+                 levels of depth.
+

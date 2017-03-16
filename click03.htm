@@ -1,0 +1,925 @@
+<HTML>
+<HEAD><TITLE>Click .INI file</TITLE></HEAD>
+<BODY BACKGROUND=click.jpg>
+<P>
+<CENTER><H1><I>Click! 2.03 Source Code Reformatter</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Click .INI file:</I></B></H2>
+</TH><TH>
+   <A HREF="click03.htm#01">@_SAY_GET_ALIGNMENT_METHOD</A><BR>
+   <A HREF="click03.htm#02">ADD_CLICK_HEADER</A><BR>
+   <A HREF="click03.htm#03">ADD_EOF_MARKER</A><BR>
+   <A HREF="click03.htm#04">ADD_FUNCTION_HEADERS</A><BR>
+   <A HREF="click03.htm#05">ALIGN_DBCREATE_IN_THE_ALIGNER</A><BR>
+   <A HREF="click03.htm#06">ALIGN_CLASS_IN_THE_ALIGNER</A><BR>
+   <A HREF="click03.htm#07">CASE_OF_BOOLEAN</A><BR>
+   <A HREF="click03.htm#08">CASE_OF_COMMANDS</A><BR>
+   <A HREF="click03.htm#09">CASE_OF_FUNCTIONS</A><BR>
+   <A HREF="click03.htm#10">CHANGE_REPLACE_WITH_TO_ASSIGNMENT</A><BR>
+   <A HREF="click03.htm#11">CHANGE_STORE_TO_ASSIGNMENT</A><BR>
+   <A HREF="click03.htm#12">CLEAN_UP_INCLUDES</A><BR>
+   <A HREF="click03.htm#13">CLICK_LOG</A><BR>
+   <A HREF="click03.htm#14">CLICK_LOG_ERASE</A><BR>
+   <A HREF="click03.htm#15">COMMENTTAB</A><BR>
+   <A HREF="click03.htm#16">CONVERT_&&_TO_//</A><BR>
+   <A HREF="click03.htm#17">CONVERT_*_TO_//</A><BR>
+   <A HREF="click03.htm#18">CONVERT_OLD_STYLE_FUNCTIONS</A><BR>
+   <A HREF="click03.htm#19">CONVERT_TO_INCREMENTOR</A><BR>
+   <A HREF="click03.htm#20">DEFAULT_INDENT</A><BR>
+   <A HREF="click03.htm#21">DEFLATE_(</A><BR>
+   <A HREF="click03.htm#22">DEFLATE_[</A><BR>
+   <A HREF="click03.htm#23">DEFLATE_{</A><BR>
+   <A HREF="click03.htm#24">DEFLATE_,</A><BR>
+   <A HREF="click03.htm#25">DEFLATE_+</A><BR>
+   <A HREF="click03.htm#26">FUNC_DIV</A><BR>
+   <A HREF="click03.htm#27">FUNCTION_REF_INTO_SOURCE</A><BR>
+   <A HREF="click03.htm#28">FUNCTION_XREF_FILE</A><BR>
+   <A HREF="click03.htm#29">FUNCTION_XREF_INTO_SOURCE</A><BR>
+   <A HREF="click03.htm#30">HEAD_DIV</A><BR>
+   <A HREF="click03.htm#31">INDENT_/IF/FOR/CASE/FUNC/BEGIN/WHILE/CLASS</A><BR>
+   <A HREF="click03.htm#32">INDENT_DO_CASE</A><BR>
+   <A HREF="click03.htm#33">INDENT_FUNCTIONS</A><BR>
+   <A HREF="click03.htm#34">INDENT_LOCALS</A><BR>
+   <A HREF="click03.htm#35">INDEX_XREF_INTO_SOURCE</A><BR>
+   <A HREF="click03.htm#36">MAKE_CLICK_DBF_FROM</A><BR>
+   <A HREF="click03.htm#37">MY_TABLE_OPENING_FUNCTION</A><BR>
+   <A HREF="click03.htm#38">NOTIFY_OF_ERROR_ON_SCREEN</A><BR>
+   <A HREF="click03.htm#39">OUTPUT_DIRECTORY</A><BR>
+   <A HREF="click03.htm#40">OUTPUT_EXTENSION</A><BR>
+   <A HREF="click03.htm#41">OUTPUT_OVERWRITE</A><BR>
+   <A HREF="click03.htm#42">POSTPROCESS_WITH_THE_ALIGNER</A><BR>
+   <A HREF="click03.htm#43">PREPROCESS_WITH_DECLARATION_BUSTER</A><BR>
+   <A HREF="click03.htm#44">RECURSION_LIMIT</A><BR>
+   <A HREF="click03.htm#45">REMOVE_CLICK_HEADERS</A><BR>
+   <A HREF="click03.htm#46">REMOVE_DUPLICATE_EMPTY_LINES</A><BR>
+   <A HREF="click03.htm#47">REMOVE_MULTIEDIT_HEADERS</A><BR>
+   <A HREF="click03.htm#48">REMOVE_SNAP_HEADERS</A><BR>
+   <A HREF="click03.htm#49">RESTORE_SCREEN_ON_EXIT</A><BR>
+   <A HREF="click03.htm#50">RETAIN_ORIGINAL_TIME_DATE_ON_OUTPUT_FILES</A><BR>
+   <A HREF="click03.htm#51">RUNMODE</A><BR>
+   <A HREF="click03.htm#52">SKIP_FILES_WITH_NO_CHANGES</A><BR>
+   <A HREF="click03.htm#53">SMART_ALIGN_MAX_ELEMENTS</A><BR>
+   <A HREF="click03.htm#54">SOURCE_XREF_FILE</A><BR>
+   <A HREF="click03.htm#55">TABLE_XREF_FILE</A><BR>
+   <A HREF="click03.htm#56">TABLE_XREF_INTO_SOURCE</A><BR>
+   <A HREF="click03.htm#57">VERBOSE</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>@_SAY_GET_ALIGNMENT_METHOD</I></H3></A>
+
+        @_SAY_GET_ALIGNMENT_METHOD
+
+    Default: 2
+
+    This is part of The Aligner.
+
+    Options: 0, no alignment
+                1, each element type in it's own aligned column
+                2, Columns aligned, but not by type
+                3, Each element in it's own row.
+
+    There is no automated reverse process for Option 3.
+
+    Because of this, if you select Option 3, be sure to review the
+    output carefully before committing to it.
+
+<A NAME="02"><BR><P><H3><I>ADD_CLICK_HEADER</I></H3></A>
+
+        ADD_CLICK_HEADER
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! adds headers to the top of each source module.
+
+<A NAME="03"><BR><P><H3><I>ADD_EOF_MARKER</I></H3></A>
+
+        ADD_EOF_MARKER
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! adds an EOF marker at the end of each source
+    module.
+
+<A NAME="04"><BR><P><H3><I>ADD_FUNCTION_HEADERS</I></H3></A>
+
+        ADD_FUNCTION_HEADERS
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! adds function dividers at the start of each
+    function in every source module.
+
+<A NAME="05"><BR><P><H3><I>ALIGN_DBCREATE_IN_THE_ALIGNER</I></H3></A>
+
+        ALIGN_DBCREATE_IN_THE_ALIGNER
+
+    Default: YES
+
+    Options: YES, NO
+
+    Selecting YES will allow Click! to align DBCREATE( when used in the
+    following two formats.
+
+    So, this:
+
+    dbcreate( 'filename.dbf', { { 'xxxxx', 'C', 23, 0 }, ;
+                                { 'yyy', 'D', 8, 0 }, ;
+                                { 'yy', 'C', 8, 0 }, ;
+                                { 'yuu', 'D', 8, 0 }, ;
+                                { 'yijiiiyy', 'N', 9, 2 }, ;
+                                { 'yhhfyy', 'D', 8, 0 } } )
+
+    ends up looking like this:
+
+    dbcreate( 'FILENAME.DBF', { { 'XXXXX'   , 'C', 23, 0 }, ;
+                                { 'YYY'     , 'D',  8, 0 }, ;
+                                { 'YY'      , 'C',  8, 0 }, ;
+                                { 'YUU'     , 'D',  8, 0 }, ;
+                                { 'YIJIIIYY', 'N',  9, 2 }, ;
+                                { 'YHHFYY'  , 'D',  8, 0 } } )
+
+    and:
+
+    aSomeArray := { { 'xxxxx', 'C', 23, 0 }, ;
+                    { 'yyy', 'D', 8, 0 }, ;
+                    { 'yy', 'C', 8, 0 }, ;
+                    { 'yuu', 'D', 8, 0 }, ;
+                    { 'yijiiiyy', 'N', 9, 2 }, ;
+                    { 'yhhfyy', 'D', 8, 0 } } )
+
+    ends up looking like this:
+
+    aSomeArray := { { 'XXXXX'   , 'C', 23, 0 }, ;
+                    { 'YYY'     , 'D',  8, 0 }, ;
+                    { 'YY'      , 'C',  8, 0 }, ;
+                    { 'YUU'     , 'D',  8, 0 }, ;
+                    { 'YIJIIIYY', 'N',  9, 2 }, ;
+                    { 'YHHFYY'  , 'D',  8, 0 } } )
+
+    Any DBCREATE() which does not follow the above two formats are not
+    changed, code such as...
+
+    local temp := {}
+
+    aadd( temp, { 'xxxxx', 'C', 23, 0 } )
+    aadd( temp, { 'yyy', 'D', 8, 0 } )
+    aadd( temp, { 'yy', 'C', 8, 0 } )
+    aadd( temp, { 'yuu', 'D', 8, 0 } )
+    aadd( temp, { 'yijiiiyy', 'N', 9, 2 } )
+    aadd( temp, { 'yhhfyy', 'D', 8, 0 } )
+
+    dbcreate( filename, temp )
+
+    ...is ignored.
+
+<A NAME="06"><BR><P><H3><I>ALIGN_CLASS_IN_THE_ALIGNER</I></H3></A>
+
+        ALIGN_CLASS_IN_THE_ALIGNER
+
+    Default: YES
+
+    Options: YES, NO
+
+    Selecting YES will allow Click! to align CLASS structures when used
+    like:
+
+<A NAME="07"><BR><P><H3><I>CASE_OF_BOOLEAN</I></H3></A>
+
+        CASE_OF_BOOLEAN
+
+    Default: LOWER
+
+    Options: NOCHANGE, UPPER, LOWER
+
+    Use this to change the case of your boolean instructions.
+
+<A NAME="08"><BR><P><H3><I>CASE_OF_COMMANDS</I></H3></A>
+
+        CASE_OF_COMMANDS
+
+    Default: LOWER
+
+    Options: NOCHANGE, UPPER, LOWER, PROPER, LIKEINFILE
+
+    Click! uses the CLICK.INI file to recognize Clipper commands. You
+    can select this option to change how COMMAND key words look in
+    Click! output. Please note that when you choose LIKEINFILE, your
+    keywords will be replaced with the ones in the CLICK.INI file, so if
+    you have a program which was coded with the old dBase III syntax
+    using 4 letter commands like CLEA SCRE, each command will be
+    expanded to the full command in the output.
+
+<A NAME="09"><BR><P><H3><I>CASE_OF_FUNCTIONS</I></H3></A>
+
+        CASE_OF_FUNCTIONS
+
+    Default: LOWER
+
+    Options: NOCHANGE, UPPER, LOWER, PROPER, LIKEINFILE
+
+    Click! uses the CLICK.INI file to recognize Clipper functions. You
+    can select this option to change how FUNCTION key words look in
+    Click! output. Please note that when you choose LIKEINFILE, your
+    keywords will be replaced with the ones in the CLICK.INI file, so if
+    you have a program which was coded with the old dBase III syntax
+    using 4 letter functions like UPPE( sometext), each function will be
+    expanded to the full function in the output.
+
+<A NAME="10"><BR><P><H3><I>CHANGE_REPLACE_WITH_TO_ASSIGNMENT</I></H3></A>
+
+        CHANGE_REPLACE_WITH_TO_ASSIGNMENT
+
+    Default: YES
+
+    Options: YES, NO
+
+    When set to YES, results in:
+
+    REPLACE foo with x
+    REPLACE bar with y
+    REPLACE baz with z
+
+    Being processed into:
+
+    field-&#62foo := x
+    field-&#62bar := y
+    field-&#62baz := z
+
+    This doesn't work unless the Declaration Buster is turned on.
+
+    Any REPLACE commands containing any of the following modifiers: ALL,
+    FOR, WHILE, RECORD, REST and NEXT are skipped..
+
+<A NAME="11"><BR><P><H3><I>CHANGE_STORE_TO_ASSIGNMENT</I></H3></A>
+
+        CHANGE_STORE_TO_ASSIGNMENT
+
+    Default: YES
+
+    Options: YES, NO
+
+    When set to YES, results in:
+
+    STORE 'Hello' + " World" to y, z, x
+    STORE x to y
+
+    being processed into:
+
+    y := z := x := 'Hello' + " World"
+    y := x
+
+<A NAME="12"><BR><P><H3><I>CLEAN_UP_INCLUDES</I></H3></A>
+
+        CLEAN_UP_INCLUDES
+
+    Default: YES
+
+    This Determines if #includes will be beautified. Beautification
+    consists of switching the #define to lower case, converting the
+    delimiters to " and upper casing the file name.
+
+    #INCLUDE 'somefile.CH'
+    #include "nextFILE.CH"
+
+    becomes
+
+    #include "SOMEFILE.CH"
+    #include "NEXTFILE.CH"
+
+<A NAME="13"><BR><P><H3><I>CLICK_LOG</I></H3></A>
+
+        CLICK_LOG
+
+    Default: CLICK.LOG
+
+    This is where the log file is written. The log file contains data
+    from each run of Click, and is created in the output directory.
+
+<A NAME="14"><BR><P><H3><I>CLICK_LOG_ERASE</I></H3></A>
+
+        CLICK_LOG_ERASE
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! erases the log file at the beginning of each run.
+
+<A NAME="15"><BR><P><H3><I>COMMENTTAB</I></H3></A>
+
+        COMMENTTAB
+
+    Default: 20
+
+    When Click! finds comments, it tabs them out at this interval. So,
+    like here when COMMENTTAB = 20, all END OF LINE comments will start
+    on column 20, 40, 60, etc. (Bigger numbers align better)
+
+<A NAME="16"><BR><P><H3><I>CONVERT_&&_TO_//</I></H3></A>
+
+        CONVERT_&&_TO_//
+
+    Default: YES
+
+    Options: YES, NO
+
+    When set to YES, Click! converts && to //.
+
+<A NAME="17"><BR><P><H3><I>CONVERT_*_TO_//</I></H3></A>
+
+        CONVERT_*_TO_//
+
+    Default: YES
+
+    Options: YES, NO
+
+    When set to YES, Click! converts first * on a line to //.
+
+<A NAME="18"><BR><P><H3><I>CONVERT_OLD_STYLE_FUNCTIONS</I></H3></A>
+
+        CONVERT_OLD_STYLE_FUNCTIONS
+
+    Default: NO
+
+    Options: YES, NO
+
+    When set to YES, Click! converts:
+
+    1.09 makes a change to the way that the conversion of old style
+    function calls are done. After creating 1.08, I was informed that
+    conversion of DO/WITH function calls to formal function/parameters
+    changes the way the variables are passed. DO/WITH passes all
+    variables by reference, but function calls do not. Now, the
+    conversion places an @ in front of each parameter. Sometimes this
+    will break the code because the @ sign is an illegal operator. See
+    below for what to do if you get C2009 errors..
+
+    With this set to YES, ...
+
+    do test
+    do test // a comment
+
+    do test with a, c, somevar
+    do test with a, c, somevar // and a comment
+
+    ... becomes ...
+
+    test()
+    test()              // a comment
+
+    test( @a, @c, @somevar )
+    test( @a, @c, @somevar )                   // and a comment
+
+    ... and a blazing warning screen appears when Click! is set to run
+    with this option turned on, because of the potential of compiler
+    error C2009 occuring because of the pass by reference on all
+    parameters.
+
+    If you get C2009 compiler errors after using this option, remove the
+    offending @ in the parameter list and recompile.
+
+<A NAME="19"><BR><P><H3><I>CONVERT_TO_INCREMENTOR</I></H3></A>
+
+        CONVERT_TO_INCREMENTOR
+
+    Default: YES
+
+    Options: YES, NO
+
+    When set to YES, Click! converts:
+
+    s = s + 1
+    s := s - 1
+    x := x + ( anyvar + anyfunc() )
+    test=test-1// with a comment
+    q = q * 14
+
+    ... to ...
+
+    s ++
+    s --
+    x += ( anyvar + anyfunc() )
+    test --             // with a comment
+    q *= 14
+
+<A NAME="20"><BR><P><H3><I>DEFAULT_INDENT</I></H3></A>
+
+        DEFAULT_INDENT
+
+    Default: 8
+
+    Default_Indent is how far Click! indents the next line after a ;
+    when Click! can't figure out how to align it with the previous line.
+
+<A NAME="21"><BR><P><H3><I>DEFLATE_(</I></H3></A>
+
+        DEFLATE_(
+
+    Default: No
+
+    Deflate_( removes the spaces after ( and before ).
+
+    Turned on, Click converts this:
+
+    X := ( 9, 3 )
+
+    to
+
+    X := (9, 3)
+
+<A NAME="22"><BR><P><H3><I>DEFLATE_[</I></H3></A>
+
+        DEFLATE_[
+
+    Default: No
+
+    Deflate_[ removes the spaces after [ and before ].
+
+    Turned on, Click converts this:
+
+    X := [ 9, 3 ]
+
+    to
+
+    X := [9, 3]
+
+<A NAME="23"><BR><P><H3><I>DEFLATE_{</I></H3></A>
+
+        DEFLATE_{
+
+    Default: No
+
+    Deflate_{ removes the spaces after { and before }.
+
+    Turned on, Click converts this:
+
+    X := { 9, 3 }
+
+    to
+
+    X := {9, 3}
+
+<A NAME="24"><BR><P><H3><I>DEFLATE_,</I></H3></A>
+
+        DEFLATE_,
+
+    Default: No
+
+    Deflate_, removes the spaces after ,
+
+    Turned on, Click converts this:
+
+    X := ( 9, 3 )
+
+    to
+
+    X := ( 9,3 )
+
+<A NAME="25"><BR><P><H3><I>DEFLATE_+</I></H3></A>
+
+        DEFLATE_+
+
+    Default: No
+
+    Deflate_+ removes the spaces before and after +
+
+    Turned on, Click converts this:
+
+    X := 9 + 3
+
+    to
+
+    X := 9+3
+
+<A NAME="26"><BR><P><H3><I>FUNC_DIV</I></H3></A>
+
+        FUNC_DIV
+
+    Default: *
+
+    This is the character used to replicate( ??, 68 ) for the function
+    divider.
+
+<A NAME="27"><BR><P><H3><I>FUNCTION_REF_INTO_SOURCE</I></H3></A>
+
+        FUNCTION_REF_INTO_SOURCE
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! places a short synopsis of the functions in each
+    module in the header for that module. This is identical to the
+    matching information in the SOURCE_XREF_FILE file, if created.
+
+    Please note that you must set ADD_CLICK_HEADER to YES.
+
+<A NAME="28"><BR><P><H3><I>FUNCTION_XREF_FILE</I></H3></A>
+
+        FUNCTION_XREF_FILE
+
+    Default: FNC_CROS.TXT
+
+    If this is set to a file name, then that file is created in the
+    output directory, and contains a cross reference which shows
+    everywhere any function is called from, and which source module the
+    call came from. A function to function cross reference.
+
+<A NAME="29"><BR><P><H3><I>FUNCTION_XREF_INTO_SOURCE</I></H3></A>
+
+        FUNCTION_XREF_INTO_SOURCE
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! places the function to function cross reference
+    information in the function header of each function in each source
+    module. This is identical to the matching information in the
+    FUNCTION_XREF_FILE file, if created.
+
+    Please note that you must set ADD_FUNCTION_HEADERS to YES.
+
+<A NAME="30"><BR><P><H3><I>HEAD_DIV</I></H3></A>
+
+        HEAD_DIV
+
+    Default: *
+
+    This is the character used to replicate( ??, 68 ) for the header
+    divider.
+
+<A NAME="31"><BR><P><H3><I>INDENT_/IF/FOR/CASE/FUNC/BEGIN/WHILE/CLASS</I></H3></A>
+
+        INDENT_IF
+        INDENT_FOR
+        INDENT_CASE
+        INDENT_FUNC
+        INDENT_BEGIN
+        INDENT_WHILE
+        INDENT_CLASS
+
+    Default: 3
+
+    Each type of structure can be indented a different amount if
+    necessary.
+
+    This is what to change if you want Click! to indent each level more
+    or less.
+
+<A NAME="32"><BR><P><H3><I>INDENT_DO_CASE</I></H3></A>
+
+        INDENT_DO_CASE
+
+    Default: NO
+
+    Options: YES, NO
+
+    Set to YES, Click! indents everything between DO CASE and END CASE
+    by the amount set in INDENT_CASE.
+
+<A NAME="33"><BR><P><H3><I>INDENT_FUNCTIONS</I></H3></A>
+
+        INDENT_FUNCTIONS
+
+    Default: NO
+
+    Options: YES, NO
+
+    Set to YES, Click! indents everything after the first line of each
+    FUNCTION by the amount set in INDENT_FUNC.
+
+<A NAME="34"><BR><P><H3><I>INDENT_LOCALS</I></H3></A>
+
+        INDENT_LOCALS
+
+    Default: no
+
+    Options: YES, NO
+
+    This directive is only operative when INDENT_FUNCTIONS is set to
+    YES.
+
+    If INDENT_FUNCTIONS=YES, and INDENT_LOCALS=NO, then any line
+    starting with LOCA PRIV MEMV STAT PUBL FIEL is left justified.
+
+<A NAME="35"><BR><P><H3><I>INDEX_XREF_INTO_SOURCE</I></H3></A>
+
+        INDEX_XREF_INTO_SOURCE
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! places a reference into the header of each file
+    which opens an index.
+
+<A NAME="36"><BR><P><H3><I>MAKE_CLICK_DBF_FROM</I></H3></A>
+
+        MAKE_CLICK_DBF_FROM
+
+    Default: ENVIRONMENT
+
+    Options: ENVIRONMENT, (specified path), DRIVES
+
+    An example of each option:
+
+    MAKE_CLICK_DBF_FROM=ENVIRONMENT
+
+    MAKE_CLICK_DBF_FROM=C:\CLIPPER5\LIB;E:\GRUMP52\LIB
+
+    MAKE_CLICK_DBF_FROM=DRIVES
+
+<A NAME="37"><BR><P><H3><I>MY_TABLE_OPENING_FUNCTION</I></H3></A>
+
+        MY_TABLE_OPENING_FUNCTION
+
+    Default: None
+
+    Options: Add function names delimited by |, to track other file
+    opening and closing functions other than USE and DBUSEAREA.
+
+    MY_TABLE_OPENING_FUNCTION=D_OPEN|D_CLOSE|D_ZAP
+
+<A NAME="38"><BR><P><H3><I>NOTIFY_OF_ERROR_ON_SCREEN</I></H3></A>
+
+        NOTIFY_OF_ERROR_ON_SCREEN
+
+    Default: YES
+
+    Options: YES, NO
+
+    If this is set to yes, then processing will stop when an error is
+    encounterd. Set to NO, the program will continue non-stop, and you
+    will need to look in the CLICK.LOG file to see what happened.
+
+<A NAME="39"><BR><P><H3><I>OUTPUT_DIRECTORY</I></H3></A>
+
+        OUTPUT_DIRECTORY=CLICKOUT
+
+    Default: CLICKOUT
+
+    This is the directory where all output will be written.
+
+<A NAME="40"><BR><P><H3><I>OUTPUT_EXTENSION</I></H3></A>
+
+        OUTPUT_EXTENSION=.PRG
+
+    Default: .PRG
+
+    This is the default extension of output which Click! will create.
+
+<A NAME="41"><BR><P><H3><I>OUTPUT_OVERWRITE</I></H3></A>
+
+        OUTPUT_OVERWRITE
+
+    Default: ALWAYS
+
+    The Options:: ALWAYS, ASK, NEVER
+
+    This determines what action Click! performs when it is going to
+    create output, but the file already exists.
+
+<A NAME="42"><BR><P><H3><I>POSTPROCESS_WITH_THE_ALIGNER</I></H3></A>
+
+        POSTPROCESS_WITH_THE_ALIGNER
+
+    Default: YES
+
+    Options: YES, NO
+
+    The Aligner currently works on:
+
+    @ SAY GET's
+
+    and:
+
+    Removes the space bloat from := on both assignments and
+    declarations.
+
+    and:
+
+    Certain types of DBCREATE() usage.
+
+    Future uses of the aligner will add other code sequences, probably
+    this is where the OO stuff will get realigned.
+
+<A NAME="43"><BR><P><H3><I>PREPROCESS_WITH_DECLARATION_BUSTER</I></H3></A>
+
+        PREPROCESS_WITH_DECLARATION_BUSTER
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, then declarations that start like this:
+
+    LOCAL var1, var2, var3
+
+    Will end up like this:
+
+    LOCAL var1
+    LOCAL var2
+    LOCAL var3
+
+    This works on the following declarations.
+
+    LOCAL
+    PRIVATE
+    MEMVAR
+    STATIC
+    PUBLIC
+    FIELD
+
+    It does cost a little time, since it is a separate process done with
+    it's own pass on the file.
+
+    Declaration Buster now also busts up multiparameter REPLACE
+    statements.
+
+    So, if you have the Declaration Buster turned on, this:
+
+    REPLACE foo with x, bar with y, baz with z
+
+    becomes:
+
+    REPLACE foo with x
+    REPLACE bar with y
+    REPLACE baz with z
+
+    which in a later pass may become:
+
+    foo := x
+    bar := y
+    baz := z
+
+<A NAME="44"><BR><P><H3><I>RECURSION_LIMIT</I></H3></A>
+
+        RECURSION_LIMIT
+
+    Default: 7
+
+    Options: Any Number
+
+    This is only used if you select...
+
+    MAKE_CLICK_DBF_FROM=DRIVES
+
+    It limits the depth that directory recursion will traverse. I found
+    on my personal NT drive, there were directories nested so deeply
+    that I got a stack overflow. This eliminated that problem.
+
+<A NAME="45"><BR><P><H3><I>REMOVE_CLICK_HEADERS</I></H3></A>
+
+       REMOVE_CLICK_HEADERS
+
+    Default: YES
+
+    Options: YES, NO
+
+    Click! headers and function dividers start with *+. If set to yes,
+    then they are recognized and removed.
+
+<A NAME="46"><BR><P><H3><I>REMOVE_DUPLICATE_EMPTY_LINES</I></H3></A>
+
+       REMOVE_DUPLICATE_EMPTY_LINES
+
+    Default: YES
+
+    Options: YES, NO
+
+    Click! will remove any extra empty lines in your source code. Single
+    empty lines are not removed. This option only works if The Aligner
+    is turned on.
+
+<A NAME="47"><BR><P><H3><I>REMOVE_MULTIEDIT_HEADERS</I></H3></A>
+
+        REMOVE_MULTIEDIT_HEADERS
+
+    Default: YES
+
+    Options: YES, NO
+
+    Multi Edit headers start with #/ or /* --% . If this is set to yes,
+    then they are recognized and removed.
+
+<A NAME="48"><BR><P><H3><I>REMOVE_SNAP_HEADERS</I></H3></A>
+
+        REMOVE_SNAP_HEADERS
+
+    Default: YES
+
+    Options: YES, NO
+
+    Snap headers and function dividers start with *! and *: If this is
+    set to yes, then they are recognized and removed.
+
+<A NAME="49"><BR><P><H3><I>RESTORE_SCREEN_ON_EXIT</I></H3></A>
+
+        RESTORE_SCREEN_ON_EXIT
+
+    Default: NO
+
+    Options: NO, YES
+
+    Set to yes, Click! restores the screen before returning to DOS.
+
+<A NAME="50"><BR><P><H3><I>RETAIN_ORIGINAL_TIME_DATE_ON_OUTPUT_FILES</I></H3></A>
+
+        RETAIN_ORIGINAL_TIME_DATE_ON_OUTPUT_FILES
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! sets the output files to have the same time/date
+    stamp as the originals.
+
+<A NAME="51"><BR><P><H3><I>RUNMODE</I></H3></A>
+
+        RUNMODE
+
+    Default: 5.X
+
+    Options: 5.X, S87
+
+    Selecting S87:
+                Stops the = to := conversion
+                Turns off the Declaration Buster
+                Stops the STORE to := converter
+                The Aligner uses = != instead of := += -= *= /= ^= !=
+
+<A NAME="52"><BR><P><H3><I>SKIP_FILES_WITH_NO_CHANGES</I></H3></A>
+
+        SKIP_FILES_WITH_NO_CHANGES
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! skips the processing of a file when the file in
+    the output directory has the same name, time and date as the file in
+    the input directory.
+
+<A NAME="53"><BR><P><H3><I>SMART_ALIGN_MAX_ELEMENTS</I></H3></A>
+
+        SMART_ALIGN_MAX_ELEMENTS
+
+    Default: 11
+
+    Smart Align Max Elements refers to how many line elements will be
+    considered to try to line something up on a continued line. Lower
+    numbers here cause more lines to use the DEFAULT_INDENT number.
+
+<A NAME="54"><BR><P><H3><I>SOURCE_XREF_FILE</I></H3></A>
+
+        SOURCE_XREF_FILE
+
+    Default: SRC_CROS.TXT
+
+    If this is set to a file name, then that file is created in the
+    output directory, and contains a cross reference of all of the
+    functions in each source module included in the entire processing
+    pass.
+
+<A NAME="55"><BR><P><H3><I>TABLE_XREF_FILE</I></H3></A>
+
+        TABLE_XREF_FILE
+
+    Default: TBL_CROS.TXT
+
+    If this is set to a file name, then that file is created in the
+    output directory, and contains a cross reference of all of the
+    tables and indexes in each source module included in the entire
+    processing pass.
+
+<A NAME="56"><BR><P><H3><I>TABLE_XREF_INTO_SOURCE</I></H3></A>
+
+        TABLE_XREF_INTO_SOURCE
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! places a reference into the header of each file
+    which opens an data table.
+
+<A NAME="57"><BR><P><H3><I>VERBOSE</I></H3></A>
+
+        VERBOSE
+
+    Default: YES
+
+    Options: YES, NO
+
+    Set to YES, Click! scrolls the input and output stream in the two
+    windows.
+
+    Set to NO, the only indication of progress will be the progress bar
+    at the top of the screen.

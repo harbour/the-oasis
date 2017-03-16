@@ -1,0 +1,40 @@
+<HTML>
+<HEAD><TITLE>Running It</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Running It:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake05.htm#01">Running a Make.</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Running a Make.</I></H3></A>
+
+      To run the make, simply type:
+
+      MAKE &#60makefilename&#62
+
+      or for example, you might type:
+
+      MAKE MYPROG       (the .MAK extension is optional)
+
+      or, starting with PBMake 2.00, PBINIT.EXE creates a simple batch
+      file that eliminates some typing. Simply type:
+
+      MK                (if MK.BAT is not present, run PBINIT again)
+
+      The time and date stamps will be surveyed, and an appropriate
+      batch file will be created and run that will compile only the
+      minimum it takes to create an up to date target.
+
+      <B>Note!</B> If you want to have PBMake remake all objects, use the /ALL
+      flag, and all objects will be recreated, regardless of time and
+      date stamps.
+
+      MAKE MYPROG /ALL
+
+      or
+
+      MK /ALL
+

@@ -1,0 +1,261 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+ <META NAME="GENERATOR" CONTENT="SGML-Tools 1.0.9">
+ <TITLE>Frequently Asked Questions (FAQ 2.31) about CA-Clipper and CA-Visual Objects: Clipper programming issues</TITLE>
+ <LINK HREF="clipper-6.html" REL=next>
+ <LINK HREF="clipper-4.html" REL=previous>
+ <LINK HREF="clipper.html#toc5" REL=contents>
+</HEAD>
+<BODY>
+<A HREF="clipper-6.html">Next</A>
+<A HREF="clipper-4.html">Previous</A>
+<A HREF="clipper.html#toc5">Contents</A>
+<HR>
+<H2><A NAME="s5">5. Clipper programming issues</A></H2>
+
+<H2><A NAME="ss5.1">5.1 I keep getting financial arithmetic results that don't add up</A>
+exactly.  From time to time my calculations are off by a fewcents but I'm sure there is nothing wrong with my code.  What'sthe deal?</H2>
+
+<P>(Excellent reply contributed by
+<A HREF="mailto:76064.1535@compuserve.com">David Husnian</A>.)
+<P>
+<P>Clipper and most computer languages use a binary floating
+point format for their real numbers.  This causes precision
+errors which commonly show up in calculations, comparisons
+and when rounding.  The problem is related to trying to represent
+an infinite number of decimal numbers into a fixed number (and a
+small fixed number at that) of binary bits.
+<P>
+<P>Statistically, there aren't any numbers that can be represented
+exactly, of course, from a practical standpoint some can be (but
+they are all somehow related to powers of 2, like 1/2 or 3/8 or
+127/128 or ...).
+<P>
+<P>Taking .275 out to just 16 bits yields:
+<P>
+<P>0100011000100111 but that is really only .274993896484375.  It
+is impossible to represent .275 accurately in a binary numbering
+system, even with unlimited bits, let alone the 64 bits that
+Clipper uses (all of which aren't used for the decimal portion). 
+<P>
+<P>Most modern languages use a format defined by the IEEE.  An
+IEEE-compliant double precision implementation meets the following
+criteria:
+<P>
+<UL>
+<LI>1 sign bit, 52 bits for the mantissa and 11 for the exponent.</LI>
+<LI>2.22 * 10 ^ -16 is the smallest number that, subtracted from 1.0,
+gives something different than 1.0.</LI>
+<LI>Normalized to 1023, which means that 10 ^ 0 will be kept as 1023,
+with 10 ^ -1 as 1022 and 10 ^ 1 as 1024.</LI>
+<LI>Smallest useable floating value is 2.23 * 10 ^ -308.</LI>
+<LI>Largest useable floating value is 1.79 * 10 ^ 308.</LI>
+</UL>
+<P>
+<P>In the IEEE standard, rounding is considered to be finding the
+closest representable number to the "exact" number.  Not an easy
+task, particularly at the level of Clipper.
+<P>
+<P>There are only two complete solutions: use only integers (for
+example, use 1234 to mean 12.34) or use a decimal numeric format
+like BCD.
+<P>
+<P>With Visual Objects you will be able to make variable declarations
+such as LOCAL i AS INT, which will have the effect of forcing only
+integer values into a variable.
+<P>
+<P>CA-Clipper 5.3a is compiled and linked with the 8.0 release of Microsoft
+C, including the standard math library component.  The rounding problems
+under this library are likely to be somewhat less severe.
+<P>
+<H2><A NAME="ss5.2">5.2 Why is "ABCDEF" = "ABC" turning up TRUE in my code?</A>
+</H2>
+
+<P> 
+The single equal sign operator (=) is not what you expect.
+If you have SET EXACT OFF (the default) then string comparisons
+only check as far as the length of the right-side value.
+If you want an exact match, then you should use the double-equals
+operator (==) instead.  Many programmers forget about it on
+purpose and just SET EXACT ON, but there are times (such as
+looking up a partial key) when the "fuzzy match" is useful.
+<P>
+<H2><A NAME="ss5.3">5.3 What is "Internal Error 667" and what can I do about it?</A>
+</H2>
+
+<P>(Answer supplied by 
+<A HREF="mailto:Josip.Almasi@sprint.pub.hr">Josip Almasi</A>, 10 February 1995.)
+<P>The evaluation stack (containing LOCAL variables, etc.) has crashed
+into a locked VM segment. Basically, the system has run out of memory
+as the VM system only locks segments near the evaluation stack when the
+memory is very old.
+<P>
+<P>From 
+<A HREF="Ian@darkblak.demon.co.uk">Ian Day</A>, 3 February 1995:
+<P>OK, you first have to imagine the layout of Clippers data segment
+(DGROUP):
+<P>
+<PRE>
+         @@@@@@@@@@@@
+         ||||||||||||
+         ||||||||||||
+         ||||||||||||          @ is where STATICs and ITEMs go
+         ||||||||||||
+         ||||||||||||          % is where LOCALs go
+         ||||||||||||
+         %%%%%%%%%%%%          * is the CPU stack
+         ************
+         ************          # is fixed C &amp; ASM data
+         ************
+         ############
+         ############
+         ############
+         ############
+         ############
+</PRE>
+<P>The rest (the '|' bit) is called 'DS available'.
+<P> 
+As your program runs it will allocate local variables which will use up
+the '%' region.  This regios has a high water mark and so Clipper
+remembers the most LOCALs that have been used at any one time (because
+you will most likely need that many again).
+<P> 
+The same thing happens with STATICs &amp; ITEMs.  All statics are stuffed into
+the top region at startup.  ITEMs (using the item API) are allocated and
+de-allocated by various parts of Clipper internally (as well as 3rd
+parties).  This region also has a low water mark with the same behaviour.
+<P> 
+If you have a lot of STATICs/ITEMs and you program tries to go deep and
+uses up a lot of LOCALs at the same time, the these two regions will
+overrun each other, and you will then get a 667, which means either the
+Eval Stack ('%' area) has overrun the MemVar table ('@' area) or vise
+versa.
+<P> 
+So, you'd probably need to greatly reduce the number of static variables
+that you're using, which would most likely cure this.
+<P> 
+If your program doesn't recurse too far, you can most likely increase
+your DS avail. amount by reducing your CPU stack.  4-5K should be
+sufficient for most things.
+<P> 
+If you still have problems, then you might want to try our debugger
+(MrDebug for CA-Clipper) which has an in-built map of DGROUP and would
+warn you before the fault happened, and you could then see what's going
+on.
+<P>
+<H2><A NAME="ss5.4">5.4 What is "Internal Error 1210" and what can I do about it?</A>
+</H2>
+
+<P>(Reply supplied by 
+<A HREF="mailto:75470.1052@compuserve.com">Norman Mongeau</A>.)
+<P>Internal Error 1210 occurs when the database driver discovers an
+index file inconsistency with which it cannot cope.  There are a
+few things you can check in your code to eliminate this error:
+<P>
+<UL>
+<LI>Be sure that all indexes relating to a given .DBF file are open
+whenever key values are updated.  (In other words, don't let
+your index files get out of synch with the data files.)
+ </LI>
+<LI>Be sure that all your index key expressions resolve to the same
+length regardless of the key value.  For example, you should
+avoid using TRIM() on the whole key expression because it would
+cause different records to have different key lengths.
+ </LI>
+<LI>Avoid having many duplicate keys in the same index.  One simple
+way to create unique keys throughout is to add something like
+<CODE>(STR(RECNO())</CODE> to the key expression.
+ </LI>
+<LI>Consider using a database driver other than DBFNTX.  The
+conditions that cause IE 1210 do not occur in the other
+drivers.
+ </LI>
+<LI>If you use <CODE>DBCREATEINDEX()</CODE> to create index files, make sure that
+the key expression character parameter is consistent with the
+key code block parameter.  It's okay if these expressions are
+not exactly the same, but they must evaluate to the same
+result.</LI>
+</UL>
+<P>
+<H2><A NAME="ss5.5">5.5 What is "Internal Error 5333" and what can I do about it?</A>
+</H2>
+
+<P>(Answer supplied by Samuel S. Shuster on 17 July 1993.)
+<P>Internal Error 5333 occurs when the virtual memory management
+subsystem gets overloaded and cannot find enough memory to
+continue execution.  You can take a few steps to cope with
+IE 5333:
+<P>
+<UL>
+<LI>You can force the virtual memory manager to do a partial
+cleanup and compaction by executing
+ 
+<PRE>
+  @ 100, 100 SAY "" // This is an impossible screen location.
+</PRE>
+
+ </LI>
+<LI>Consider using CA-Clipper 5.2d.  It contains bug fixes that
+sometimes but not always solve IE 5333 problems.  (Editor's
+note: Obviously, Shuster wrote this when 5.2d was the current
+release.  The consensus now is that 5.2e is the most stable
+CA-Clipper release.)</LI>
+</UL>
+<P>
+<P>
+<H2><A NAME="ss5.6">5.6 What is an "Unrecoverable Error 650: Processor Stack Fault"?</A>
+</H2>
+
+<P> 
+It's a result of infinite recursion, which occurs when a function
+calls itself, which calls itself, which calls itself, and so on
+without stopping.  Most often this occurs when your error handler
+has an error, which triggers the error handler...
+<P>
+<H2><A NAME="ss5.7">5.7 What is "runtime error R6003"?</A>
+</H2>
+
+<P>The R6003 error occurs when you run a Clipper program on a machine              
+that is 'too fast'. Part of the startup procedure in every executable           
+is used to determine a value. That value is used in a timing loop. On           
+very fast machines, the timing routine returns 0, causing an error in           
+the program's initialization, since your software then fails with a             
+divide by 0 error.                                                              
+<P>                                                                                
+To fix this problem, there are two possibilities.                               
+<P>                                                                                
+First, by the time that 5.3 was released, CA included the object that           
+fixed the problem in that version. So, if you have 5.3, you need to             
+link in __wait_4.obj to every executable you produce.                           
+<P>                                                                                
+If you use Clipper 5.0-5.2e, there is another object, available from            
+The Oasis. The file is named R6003FIX.ZIP, and is in the patch area.            
+There are complete instructions included for it's use, but it is                
+essentially the same as the 5.3 fix, just link it in on every                   
+executable you produce.
+<P>
+<H2><A NAME="ss5.8">5.8 What is "internal error 8002"?</A>
+</H2>
+
+<P>Clipper 5.3 linked with Exospace fails when creating indexes for large          
+numbers of records and complex keys. Such a situation can result in internal
+error 8002. To fix this simply use OPTEDIT:
+<PRE>
+optedit myapp.exe -extramin 4096
+</PRE>
+<P>
+<H2><A NAME="ss5.9">5.9 What about the other "Internal Errors"?</A>
+</H2>
+
+<P>An official listing of internal errors provided by Computer Associates
+may be found in files IE52NG.ZIP or IE52TX.ZIP, depending on whether you
+prefer a Norton Guide file format or a plain ASCII file.  These are on
+the standard FTP sites, or in Library 1.  
+<P>
+<HR>
+<A HREF="clipper-6.html">Next</A>
+<A HREF="clipper-4.html">Previous</A>
+<A HREF="clipper.html#toc5">Contents</A>
+</BODY>
+</HTML>

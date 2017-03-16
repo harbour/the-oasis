@@ -1,0 +1,92 @@
+<HTML>
+<HEAD><TITLE>GNU RCS Version Control Support</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>GNU RCS Version Control Support:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake09.htm#01">PBMake now includes Revision Control Awareness!</A><BR>
+   <A HREF="pbmake09.htm#02">How do I use PBMake with an RCS system?</A><BR>
+   <A HREF="pbmake09.htm#03">How does PBMake look into the RCS system?</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>PBMake now includes Revision Control Awareness!</I></H3></A>
+
+      If you use a Revision (or Version) Control System (RCS/VCS) for
+      your projects then PBMake can be made aware of the 'checked in'
+      location of your source files, libraries and include files.
+
+      To set up PBMake to be aware of your revision control system, the
+      command required to check-out a file, and the command required to
+      clean up the temporarily checked out file must be added to your
+      PBMake .MAK script.
+
+      PBMake has been tested with dosRCS, the free revision control
+      system which is managed by the GNU project team. If you've not yet
+      seen dosRCS or you are not currently using an RCS system to manage
+      your source code, then point yourself to :-
+
+      <B><A HREF="ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu/devtools/rcs57pc1.zip" >ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu/devtools/rcs57pc1.zip</A></B>
+      <B><A HREF="ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu/devtools/rcs57pc2.zip" >ftp://ftp.leo.org/pub/comp/os/os2/leo/gnu/devtools/rcs57pc2.zip</A></B>
+
+<A NAME="02"><BR><P><H3><I>How do I use PBMake with an RCS system?</I></H3></A>
+
+      The first thing to do is to switch on RCS checking in PBMake. This
+      is achieved by adding the RCSCHECKOUT directive in your make file.
+
+      <B>RCSCHECKOUT=co -M</B>
+
+      This directive switches on RCS checking, and also tells PBMake how
+      to check out a source file from RCS if it doesn't exist in the
+      current directory.
+
+      <B>If a SOURCE, INCLUDE or LIBRARY file already exists, PBMake will</B>
+      <B>continue normally. If the source file doesn't exist then the RCS</B>
+      <B>checking kicks in.</B>
+
+      After adding the RCSCHECKOUT directive you need to add the
+      RCSTIDYUP directive, this directive tells PBMake how to delete the
+      files that had to be checked out in order to continue with the
+      make.
+
+      <B>RCSTIDYUP=rm -f </B>
+
+      Remember, most RCS systems check out files with the READONLY file
+      attribute set ... so you must use a DELETE function that can
+      delete READONLY files. I use the GNU clone of the Unix program
+      'rm', which has the -f flag to force the delete.  MS/DOS 6 -&#62
+      allow you to use DEL /F, to force the delete.
+
+      Once you've added the RCSCHECKOUT directive and the RCSTIDYUP
+      directive, your PBMake script is RCS aware.
+
+      This means that if PBMake looks in your source directory for
+      <B><sourcefile></B> (which could also be a library or include file)
+      and it is not found there, then PBMake will begin to look for
+      &#60sourcefile&#62 within the RCS system, and will check it out if
+      necessary.
+
+<A NAME="03"><BR><P><H3><I>How does PBMake look into the RCS system?</I></H3></A>
+
+      If the &#60sourcefile&#62 in question exists in the current directory,
+      then it is used, and RCS is not called into play.
+
+      If &#60sourcefile&#62 is still unresolved, and you have a child
+      subdirectory in your source directory named RCS, then that
+      directory will be searched for &#60sourcefile&#62. If &#60sourcefile&#62 is
+      found there, it is checked out and used.
+
+      If &#60sourcefile&#62 is still unresolved, and you have a file named RCS
+      in your source directory, then that file should contain the full
+      drive and directory of where the RCS files are stored. This
+      'pointed to' directory is then searched for &#60sourcefile&#62. If
+      &#60sourcefile&#62 is found there, it is checked out and used.
+
+      If &#60sourcefile&#62 is still unresolved, the RCSDIR environment
+      directive is checked. If the RCSDIR environment variable exists,
+      the directory it points to is searched for the file. If
+      &#60sourcefile&#62 is found there, it is checked out and used.
+
+      If &#60sourcefile&#62 is still unresolved, then it is reported as
+      missing.

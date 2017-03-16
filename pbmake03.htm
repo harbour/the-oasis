@@ -1,0 +1,243 @@
+<HTML>
+<HEAD><TITLE>Blank Template</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Blank Template:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake03.htm#01">Example Short Form Blank Template.</A><BR>
+   <A HREF="pbmake03.htm#02">Example Long Form Blank Template.</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Example Short Form Blank Template.</I></H3></A>
+
+      Here is an example of the default short form blank template with
+      full commenting.
+
+      As you can see, it prompts you for most of the information in a
+      way that makes sense to a programmer.
+
+      This is created by typing:
+
+      PBINIT &#60makefilename&#62
+
+      Then, select 'Basic PBMake script with comments' from the menu.
+
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+               // The target you are creating
+TARGET=
+
+               // The linker script for the TARGET
+LINKFILE=
+
+               // The linker you are using
+LINKER=
+
+               // The include files you depend on
+INCLUDE=
+
+               // Where the object code will go
+OBJDIR=
+
+               // Where the source code resides
+SRCDIR=
+
+================== Section 1 ====================
+
+               // The compiler flags for this section
+FLAG1=
+
+               // The source files to compile (no extensions)
+               // Multiple sources per PROG1= line is OK
+PROG1=
+PROG1=
+PROG1=
+PROG1=
+
+================== Section 2 ====================
+
+               // The compiler flags for this section
+FLAG2=
+
+               // The source files to compile (no extensions)
+               // Multiple sources per PROG2= line is OK
+PROG2=
+PROG2=
+PROG2=
+PROG2=
+
+(You can have up to 99 sections)
+
+<A NAME="02"><BR><P><H3><I>Example Long Form Blank Template.</I></H3></A>
+
+      Here is an example of the default long form blank template with
+      full commenting.
+
+      As you can see, it prompts you for most of the information in a
+      way that makes sense to a programmer.
+
+      This is created by typing:
+
+      PBINIT &#60makefilename&#62
+
+      Then, select 'Advanced PBMake script with comments' from the menu.
+
+******************************************************************************
+*                 PBMake 2.16 for Clipper, Xbase++, C and ASM                *
+*       Copyright (C) 1998 Phil Barnett, All Rights Reserved Worldwide       *
+*                           See PBMAKE.NG for help.                          *
+******************************************************************************
+
+               // The target you are creating
+TARGET=
+
+               // Causes the target to relink if older than the lib files
+               // (Files will be verified)
+LIB=
+
+               // The linker script for the TARGET
+LINKFILE=
+
+               // The linker you are using
+LINKER=
+
+               // Runs before first compile if there is one
+PRECOMPILECMD=
+
+               // Runs before linker if linker runs
+PRELINKCMD=
+
+               // Optional link file prefix
+LINKER_SEP=@
+
+               // Runs if there was nothing to do
+NONEED=
+
+               // Runs if everything worked
+SUCCESS=
+
+               // Runs if something failed
+FAILURE=
+
+
+
+ ------&#62 Using this script overrides the defaults for
+ ------&#62 Clipper COMPILER=, SRCEXT= and OBJEXT= 
+
+================== Section 1 ====================
+
+               // The compiler flags for this section
+FLAG1=
+
+               // The source files to compile (no extensions)
+               // Multiple sources per PROG1= line is OK
+PROG1=
+PROG1=
+PROG1=
+PROG1=
+
+               // The include files for this section
+               // (Paths will be verified)
+INCLUDE1=
+
+               // The compiler for this section
+               // (CLIPPER for Clipper)
+COMPILER1=
+
+               // The Source Directory for this section
+               // (Directory will be Verified)
+SRCDIR1=
+
+               // The Object Directory for this section
+               // (Directory will be Verified)
+OBJDIR1=
+
+               // The Source Extension for this section
+               // (.PRG for Clipper)
+SRCEXT1=
+
+               // The Object Extension for this section
+               // (.OBJ for Clipper)
+OBJEXT1=
+
+================== Section 2 ====================
+
+               // The compiler flags for this section
+FLAG2=
+
+               // The source files to compile (no extensions)
+               // Multiple sources per PROG2= line is OK
+PROG2=
+PROG2=
+PROG2=
+PROG2=
+
+               // The include files for this section
+               // (Paths will be verified)
+INCLUDE2=
+
+               // The compiler for this section
+               // (CLIPPER for Clipper)
+COMPILER2=
+
+               // The Source Directory for this section
+               // (Directory will be Verified)
+SRCDIR2=
+
+               // The Object Directory for this section
+               // (Directory will be Verified)
+OBJDIR2=
+
+               // The Source Extension for this section
+               // (.PRG for Clipper)
+SRCEXT2=
+
+               // The Object Extension for this section
+               // (.OBJ for Clipper)
+OBJEXT2=
+
+================== Section 3 ====================
+
+               // The compiler flags for this section
+FLAG3=
+
+               // The source files to compile (no extensions)
+               // Multiple sources per PROG3= line is OK
+PROG3=
+PROG3=
+PROG3=
+PROG3=
+
+               // The include files for this section
+               // (Paths will be verified)
+INCLUDE3=
+
+               // The compiler for this section
+               // (CLIPPER for Clipper)
+COMPILER3=
+
+               // The Source Directory for this section
+               // (Directory will be Verified)
+SRCDIR3=
+
+               // The Object Directory for this section
+               // (Directory will be Verified)
+OBJDIR3=
+
+               // The Source Extension for this section
+               // (.PRG for Clipper)
+SRCEXT3=
+
+               // The Object Extension for this section
+               // (.OBJ for Clipper)
+OBJEXT3=
+
+(You can have up to 99 sections)
+
+

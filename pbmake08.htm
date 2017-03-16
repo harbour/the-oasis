@@ -1,0 +1,270 @@
+<HTML>
+<HEAD><TITLE>Script Initializer Tool</TITLE></HEAD>
+<BODY BACKGROUND=pbmake.jpg>
+<P>
+<CENTER><H1><I>PBMake 2.16 for Clipper, Xbase++, C and ASM</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Script Initializer Tool:</I></B></H2>
+</TH><TH>
+   <A HREF="pbmake08.htm#01">What is PBInit?</A><BR>
+   <A HREF="pbmake08.htm#02">Quick Start!</A><BR>
+   <A HREF="pbmake08.htm#03">PBInit will create a .LNK file for me?</A><BR>
+   <A HREF="pbmake08.htm#04">PBInit will create a .MAK file for me?</A><BR>
+   <A HREF="pbmake08.htm#05">What do you mean, refresh the .MAK file?</A><BR>
+   <A HREF="pbmake08.htm#06">How does PBMAKE.INI effect PBInit?</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>What is PBInit?</I></H3></A>
+
+  PBInit was created to make it easier for you to work with the PBMake
+  make engine, by providing a facility to combine automatic link script
+  creation, and the ability to use any existing link script to create a
+  working .MAK file for PBMake.
+
+  Unless you like making long complex .LNK and .MAK scripts for other
+  cryptic make engines, PBInit will help you by automating this task,
+  using preset defaults, whick can be customized to your specific needs.
+
+  PBInit also creates MK.BAT and MAKE.BAT referred to elsewhere in this
+  guide if they are missing.
+
+<A NAME="02"><BR><P><H3><I>Quick Start!</I></H3></A>
+
+  Just run PBInit followed by the file name of the .MAK file you want to
+  create or refresh. Once PBInit starts, you will be presented with
+  several menu choices. Check the options you need and let PBInit work
+  for you.
+
+<A NAME="03"><BR><P><H3><I>PBInit will create a .LNK file for me?</I></H3></A>
+
+  Yes, PBInit now includes the ability to create link scripts for you.
+
+  Go to the directory where your source code resides and run PBInit
+  followed by the name of the make file you want to create. At the
+  startup screen of PBInit, select Create Link Script.
+
+  On the second screen, select the language and linker, and whether to
+  use ALL source code or SOME source code.
+
+  If you select to use SOME source code, you will be presented with a
+  pick list of the source code. Go to each source module you wish to
+  include in the .LNK file and press &#60space&#62. This will leave a  mark
+  next to any source code you have selected. When you are done selecting
+  source modules, press &#60enter&#62 to continue.
+
+  PBInit will then ask you to pick the top module.
+
+  Then, the .LNK script will be created, and this creation will be
+  automatically followed by the creation of the matching .MAK file.
+
+<A NAME="04"><BR><P><H3><I>PBInit will create a .MAK file for me?</I></H3></A>
+
+  You bet! And it is a very smart mechanism, indeed.
+
+  First, PBInit checks to see if the .MAK name you are about to create
+  already exists. If it does, you can abort, refresh it, or delete it
+  and start a new one.
+
+  Next, PBInit scans for .LNK files in the current directory. If it
+  finds more than one, you must choose one. If there is only one, PBInit
+  continues without prompting.
+
+  Once PBInit has determined which link file you are going to use, it
+  opens it and reads it into memory. As it reads it in, it seperates it
+  into categories, such as source references and library references and
+  lines that have no bearing on .MAK script creation.
+
+  After PBInit has determined all of the source files which were pointed
+  to in the .LNK file you are using as a template, each source file is
+  opened and completely scanned for #INCLUDE references. Now, PBInit has
+  built three sets of files. The SOURCE set, the LIB set and the INCLUDE
+  set.
+
+  At this point, PBInit uses the CLIPPER compiler on each source module,
+  trying different flag combinations from the most difficult to the most
+  forgiving. Each file in the SOURCE set is subcategorized according to
+  these flag combinations. Here is the list of FLAG= testing.
+
+  /N is tested to see if you need it.
+
+  Then, in the following order (with or without the /N flag as
+  determined in the previous step)
+
+  /M /W /ES2
+  /M /W /A /ES2
+  /M /W /V /ES2
+  /M /W /A /V /ES2
+  /M /ES2
+  /M
+
+  Once this process finishes, the path to each file in the INCLUDE set
+  and the LIB set is located.
+
+  PBInit then reads your default data from the PBMAKE.INI file, such as
+  the editor you have set up to jump to when an error is encountered.
+
+  Finally, with all of this information that has been collected and
+  determined, the .MAK file is written and you return to DOS.
+
+<A NAME="05"><BR><P><H3><I>What do you mean, refresh the .MAK file?</I></H3></A>
+
+  If you transfer code back and forth from one machine to another, you
+  know how much work it is to keep all of the scripts working on both
+  machines. The problem begins when the two machines that have files in
+  different locations. For instance, if your compiler and .LIB directory
+  is on C: on one machine and on D: on another machine, then any fully
+  developed .MAK model would stop working as you transferred the code
+  from one machine to the next.
+
+  PBInit has relieved you of this problem by 'refreshing' the .MAK files
+  from the environment of whichever machine you are on.
+
+  Simply run PBInit &#60existingmakfile&#62, and you will be prompted three
+  ways:
+
+  1. Abort, I didn't mean to do this.
+  2. Refresh, I just want to update the references in my .MAK file.
+  3. Delete this .MAK file and create a new one from scratch.
+
+  Pick #2, Refresh, and PBInit will:
+
+  1. Locate all of the LIB= and INCLUDE= lines in the existing .MAK file
+  2. Strip the path off of them
+  3. Use the current environment to find the files that were referred to
+  4. Find the correct path to each reference
+  5. Replace them back into the .MAK file with the corrected path
+     information for the current environment.
+
+  If PBInit can't find a referred to file in the current environment, a
+  comment will be placed in the .MAK file where the file was originally
+  referred to stating that the reference couldn't be found, like:
+
+  // LIB=SOMELIB not found in local directory or LIB= environment
+
+  or
+
+  // INCLUDE=SOME_CH not found in local directory or INCLUDE= environment
+
+  After correcting the environment, you can run the PBInit refresh
+  option again and PBInit will look up the full path and correct the
+  .MAK file.
+
+<A NAME="06"><BR><P><H3><I>How does PBMAKE.INI effect PBInit?</I></H3></A>
+
+  The first section, [PBINIT], tells PBInit about your editor. When
+  PBMake encounters an error in your code, it will automatically load
+  the error list and the code in question into your editor. This
+  sections tells PBMake what compiler you are using, so the error can be
+  correctly parsed. It also tells PBMake what editor and the command to
+  jump to a line number. This information is used in the automatic
+  creation of .MAK files.
+
+
+[PBINIT]
+COMPILER=CLIPPER
+EDITOR=Q
+LINEFLAG=-N
+
+
+  After the first section, there are 5 sections which are used to create
+  link scripts (.LNK). They are [CLIPPER], [C], [TASM], [MASM] and [XPP].
+
+  Each of these sections are divided into two parts, signified by the
+  {PRE} and {POST} position locators.
+
+  When building a linker script, there is generally some linker commands
+  that you need to put ahead of the object references, and in general,
+  your library references go after your object reference. These two
+  sections can be defaulted here and every time you build a link script,
+  the {PRE} and {POST} sections will be included automatically as your
+  default link script. If you need PBInit to always overlay your source
+  code, include the {OVERLAY} command.
+
+
+  Here is an example with the CLIPPER section filled in. Please note the
+  extra library calls that are commented out. You can uncomment them or
+  delete them, based on each link script's needs. This makes it easy for
+  you to create a 'standard' link script here in the .INI file and use
+  it as the basis for all your future link scripts without a bunch of
+  copying and editing.
+
+[CLIPPER]
+{OVERLAY}
+{PRE}
+NOBELL
+
+BLINKER MESSAGE WINK
+BLINKER INCREMENTAL OFF
+BLINKER EXECUTABLE CLIPPER //F:99  //E:0
+BLINKER EXECUTABLE EXTENDED 1500
+# BLINKER EXECUTABLE COMPRESS 1
+
+BLINKER HOST MESSAGE ON
+
+STACK 7168
+
+SEARCH BLXRATEX,BLXCLP52
+{POST}
+#BEGIN
+
+#  file cmxdbt52.obj
+#  file cmx52.obj
+
+#  lib cm52
+#  lib cmx52
+
+#END
+
+# lib nanfor
+
+# Search mrwindow
+# @mrdmax
+# fi mrdump.lib
+
+#@CL520MIN
+@CL520MID
+#@CL520MAX
+
+# MODULE EXITSTATE,GETAPPLYKE,_EXITSTATE,GETACTIVE,READVAR
+
+#fi cld
+
+#@cm
+#@cmx
+
+#begin
+#  lib TPOVL52
+#end
+#search TPBLX52
+
+#@TPBLX.lnk
+
+#BEGIN
+#  lib FLEX52
+#END
+
+#BEGIN
+#  lib FUNCK
+#END
+
+#lib LLIBCA
+
+#lib CTp
+#FI CTUSp
+
+[C]
+{PRE}
+{POST}
+
+[TASM]
+{PRE}
+{POST}
+
+[MASM]
+{PRE}
+{POST}
+
+[XPP]
+{PRE}
+{POST}
+

@@ -1,0 +1,289 @@
+<HTML>
+<HEAD><TITLE>Getting Started</TITLE></HEAD>
+<BODY BACKGROUND=click.jpg>
+<P>
+<CENTER><H1><I>Click! 2.03 Source Code Reformatter</I></H1></CENTER>
+<CENTER><TABLE BORDER=3 CELLPADDING=15 BGCOLOR="#99CCCC"><TR><TH>
+<H2><B><I>Getting Started:</I></B></H2>
+</TH><TH>
+   <A HREF="click01.htm#01">Read this first.</A><BR>
+   <A HREF="click01.htm#02">Hi, Click! user.</A><BR>
+   <A HREF="click01.htm#03">Put it in your Path.</A><BR>
+   <A HREF="click01.htm#04">Run it!</A><BR>
+</TH></TR></TABLE></CENTER>
+<P><PRE>
+<A NAME="01"><BR><P><H3><I>Read this first.</I></H3></A>
+
+      If you haven't gotten into the habit of reading the changes
+      document in this NG, then you should read all of the changes
+      starting with the oldest one. Then, as I send out new versions,
+      you just need to read the latest changes section.
+
+      There are a lot of 'tidbits' of information in there that are not
+      found elsewhere in this guide.
+
+<A NAME="02"><BR><P><H3><I>Hi, Click! user.</I></H3></A>
+
+    Perhaps a few words of why I created Click! is in order before we
+    dive off into seeing how we can use it.
+
+    First off, I do not intend for Click! to be the ultimate source code
+    reformatter. (but it's pretty good!)
+
+    Over the years, I have run into so much badly written/formatted
+    code, which I would tediously reformat line by line just to make it
+    barely readable, that I decided to create a tool which would
+    automate _MANY_ of the tasks of turning ugly code into usable code.
+
+    What I have found while creating Click! is that the CA-Clipper
+    language is very robust, and therefore any source code scanner that
+    is worth anything must also be quite robust. Thanks to many fine
+    beta testers, I believe that Click! has acheived an excellent
+    capability of handling extremely diverse code.
+
+    I suspect that the optimum use of Click! would be to run it once on
+    ugly code, and that would be the last time. Once you begin to
+    customize the look of the code, it would be stupid to run Click!
+    again and toss it all down the drain.
+
+    There is NO WAY to create the ultimate source code reformatter, and
+    if you just want a good re-indenter, you should not be using Click!.
+    Use DST.EXE available on The Oasis.
+
+    Every programmer has a style all his own. Click! is not an attempt
+    to be as flexible as every programmer.
+
+    Of course, if you like the way that Click! formats source code,
+    there is no reason why you can't use it everyday on all of your
+    source code.
+
+    So, here are some of the basic rules that Click! runs on today.
+
+    0. If you already have carefully formatted code, do not use Click!
+
+       Click! is the infantry, not the Green Beret.
+
+    1. The line is parsed into it's component parts, like strings,
+       words, operators and spaces. Words are looked up in the .INI file
+       and are assigned to either Command, Function or Variable status.
+       Finally, any word that is followed by a ( is called a Function,
+       except IF,  which is assumed a function until proven to be a
+       command.
+
+    2. The spaces between the elements are thrown away.
+
+       Think about this. All previous alignment is down the drain. This
+       has it's good points and it's bad points.
+
+    3. The spaces are put back in with a single space between each
+       element.
+
+       ( Note: It would be lovely if we could teach a program to have
+       artificial intelligence so that it could look around and see that
+       the lines before it or the several lines following it all have
+       something in common, and should be lined up to make them pretty
+       for our eyes. This means that the code is torn apart and put back
+       together with a single space between each element.)
+
+       ( Later note: The Aligner was created to overcome this
+       shortcoming in the main pass. It recognizes sequences of code,
+       reviews them as a unit and performs alignments based on the unit
+       of code. I found this was impossible to do in the main pass,
+       which we are talking about here... )
+
+       ( Even Later note: I have added some deflates so that you can
+       remove many of the inflated spaces that Click! originally created
+       in this step.)
+
+       // options are YES, NO
+       // deflate mode removes spaces
+       // following ({[ and preceding ]})
+       // following ,
+       // both sides of +
+       DEFLATE_(=YES
+       DEFLATE_{=YES
+       DEFLATE_[=YES
+       DEFLATE_,=YES
+       DEFLATE_+=YES
+
+       Once the line is reassembled, I do a few things that can make it
+       look better.
+
+       The fallback modes are:
+
+       a) If I can't figure out how to indent something on a continued
+          line, it defaults to DEFAULT_INDENT (defaults to 8) spaces
+          indent for the rest of the continuation.
+
+       b) Spaces are removed in certain places. Spaces are removed
+          before commas, before and after : and =&#62 and \, before ( in
+          certain circumstances, after @ and ! unless it is the first
+          element of a line, always after ::, etc. Spaces are also
+          removed based on the settings of the deflate directive shown
+          above.
+
+    4. Multi command lines are broken up into their components to make
+       it obvious where control structures lie.
+
+       This means that...
+
+       for x := 1 to 10; qqout( x ); next
+
+       ...will become...
+
+       for x := 1 to 10
+          qqout( x )
+       next
+
+       Some of you are really not going to like this, but please feel
+       free to write your own if you can do it better. I'll toss mine
+       and use yours. ;)
+
+       It makes it ever so much easier to understand code when it has
+       been broken up this way, and the compiler certainly doesn't care.
+
+       Furthermore, this allows Click! to indent mysterious code easily.
+
+    5. If there is a = in the second position, it becomes :=. Same with
+       for/next. The = will become a := .
+
+       This will not happen if you run Click! in S87 mode.
+
+    6. There is some elaborate code in there to figure out whether an IF
+       is a command or a function. This is perhaps the most difficult
+       part of the code. I have tried this about twenty or thirty
+       different ways.
+
+       Here is the rule today: (which seems to work pretty reliably on
+       plain clipper code)
+
+       If there is an IF followed by a parenthesis, begin going through
+       the operator parts of the line. Count up one for each open paren
+       and down one for each close paren. If the paren count is at 1 and
+       you find a comma that is not inside a string, the IF is a
+       function. If the paren count goes above 1 and then reaches 0,
+       stop looking.
+
+       Any other occurance of IF is a command.
+
+       If any of you have a better way, please feel free to elaborate.
+
+    7. Reindenting takes place along the way, and is a byproduct of what
+       Click! is doing. The real thrust is to straighten up the actual
+       code into some type of regularity.
+
+       In general, if there is something that you don't like about
+       Click! that is a matter of style, it is probably not something
+       easy to do. I will work on it, and will take your suggestions.
+
+       (Version 2.x and above, Object Oriented code beautification was
+       built into Click!)
+
+    8. There are no guarantees that any output of Click! will compile,
+       so of course, the first thing you MUST do is create a backup or
+       even more preferably, work in a junk directory, so that any
+       valuable code is not touched in any way.
+
+    9. Click! creates a log if there is a structure underflow or
+       overflow. The log file name is definable in the .INI file and
+       defaults to CLICK.LOG.
+
+       You can use it to help report things that went badly, since it
+       will point you to the end of the function that failed. You will
+       have to manually compare the input and output to see where the
+       actual problem occurred.
+
+       If you find some code that breaks Click!, please condense the
+       code to the smallest reproducable chunk. Then, email me with that
+       chunk. I do not need the CLICK.LOG file. That is for you to find
+       the error with. It will do me no good, and I should be able to
+       reproduce the error with your code snippet.
+
+    10. # commands which cover more than a single line are written 'as
+        is' in the output. No formatting takes place on #defines, etc..
+        The only exception to this is that the first line, which starts
+        with the # character, is left justified.
+
+    12. CLICK.INI belongs in the same directory as CLICK.EXE. You do not
+        have to put it in the working directory and if you do, it will
+        override the one that is in the same directory as CLICK.EXE
+
+<A NAME="03"><BR><P><H3><I>Put it in your Path.</I></H3></A>
+
+      Put CLICK.EXE and CLICK.INI in a directory in your path. Your
+      \CLIPPER5\BIN directory would be fine.
+
+      The first time you run Click!, you will be asked to scan your
+      library files. Click! defaults to scanning your environment for
+      directory references. You can change this default behaviour by
+      setting the appropriate section of CLICK.INI.
+
+      // options are ENVIRONMENT, (specified path), DRIVES
+      MAKE_CLICK_DBF_FROM=ENVIRONMENT
+      //MAKE_CLICK_DBF_FROM=C:\CLIPPER5\LIB;E:\GRUMP52\LIB;F:\FUNCKY\LIB
+      //MAKE_CLICK_DBF_FROM=DRIVES
+
+      // This is only used if you select DRIVES above.
+      // It limits the directory depth that recursion will traverse.
+      RECURSION_LIMIT=7
+
+      The CLICK.DBF file will build automatically.
+
+      If you need to rebuild the library list due to adding or deleting
+      library files run Click! with one of the following parameters.
+
+      CLICK /REBUILD &#60Enter&#62
+      CLICK /UPDATE &#60Enter&#62
+      CLICK CLICK.DBF &#60Enter&#62
+
+      If you are using CA-Clipper 5.3, then copy CLICK53.INI to
+      CLICK.INI and then copy it into your directory which contains
+      CLICK.EXE.
+
+<A NAME="04"><BR><P><H3><I>Run it!</I></H3></A>
+
+     First, make a backup of your source files, before running Click!
+
+     Click! never modifies or does anything but read your original
+     source files, but when you are finished, you are likely to copy the
+     output back to the original source directory. This step would
+     overwrite your original source.
+
+     Make a backup first!
+
+
+     If you want to process a link script, type: ( preferred option )
+
+     CLICK &#60linkfile.LNK&#62 &#60Enter&#62
+
+     Click! will gather the list of files to process, sort them, create
+     the output directory if necessary, and then process each file one
+     at a time. It will recurse all referenced .LNK files.
+
+
+     If you want to process a single file in a directory, type:
+
+     CLICK &#60sourcename&#62 &#60Enter&#62
+
+
+     If you want to process all the files in a directory, type:
+
+     CLICK &#60Enter&#62
+
+
+     If you want to process a specific group of files in a single
+     directory, create a text file of the names of the files you want to
+     process, and type:
+
+     CLICK @&#60filelist&#62 &#60Enter&#62
+
+
+     When Click! finishes, look in the output directory for the Click!
+     output source code and reference files. If you don't change the
+     .INI file, this directory will be in the source directory and will
+     be named CLICKOUT.
+
+     Click does nothing to your original source files, other than
+     reading them.
+
+
